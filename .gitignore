@@ -1,0 +1,11 @@
+# Ignore development configuration files
+**/appsettings.Development.json
+
+.vs/
+
+bin/
+obj/
+.env
+appsettings.json
+
+
