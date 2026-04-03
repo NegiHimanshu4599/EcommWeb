@@ -16,5 +16,6 @@ namespace AuthService.Domain.Entities
         public string? City { get; set; }
         public string? State { get; set; }
         public string? PostalCode { get; set; }
+        public bool IsActive { get; set; } = true;
     }
 }

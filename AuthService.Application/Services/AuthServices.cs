@@ -1,13 +1,15 @@
-﻿using AuthService.Domain.Interfaces;
-using AutoMapper;
+﻿using AuthService.Application.DTOs;
+using AuthService.Domain.CommonFunctions;
 using AuthService.Domain.DTOs;
+using AuthService.Domain.Entities;
 using AuthService.Domain.Helper;
+using AuthService.Domain.Interface;
+using AuthService.Domain.Interfaces;
+using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using AuthService.Domain.Entities;
-using AuthService.Domain.CommonFunctions;
-using AuthService.Domain.Interface;
+using System.Security.Claims;
 
 namespace AuthService.Domain.Services
 {
@@ -20,10 +22,10 @@ namespace AuthService.Domain.Services
         private readonly IMapper _mapper;
         private readonly JwtTokenGenerator _jwt;
         private readonly IConfiguration _config;
-        public AuthServices(
-            IConfiguration config, IUnitOfWork unitofwork,
-            JwtTokenGenerator jwt, ILogger<AuthServices> logger,
-            UserManager<ApplicationUser> userManager, IMapper mapper, RoleManager<IdentityRole> roleManager)
+
+        public AuthServices(IConfiguration config, IUnitOfWork unitofwork,JwtTokenGenerator jwt, 
+            ILogger<AuthServices> logger,UserManager<ApplicationUser> userManager, IMapper mapper, 
+            RoleManager<IdentityRole> roleManager)
         {
             _unitofwork = unitofwork;
             _jwt = jwt;
@@ -33,6 +35,37 @@ namespace AuthService.Domain.Services
             _mapper = mapper;
             _config = config;
         }
+        public async Task<bool> DeactivateUserAsync(string userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            if(user == null)
+            {
+                _logger.LogWarning("User not found: {UserId}", userId);
+                throw new KeyNotFoundException("User Not Found");
+            }
+            user.IsActive = false;
+            var result = await _userManager.UpdateAsync(user);
+            return result.Succeeded;
+        }
+        public async Task<UserProfileDto> GetProfileAsync(string userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                _logger.LogWarning("User not found: {UserId}", userId);
+                throw new KeyNotFoundException("User Not Found");
+            }
+            return new UserProfileDto
+            {
+                Email = user.Email,
+                Name = user.Name,
+                StreetAddress = user.StreetAddress,
+                City = user.City,
+                State = user.State,
+                PostalCode = user.PostalCode,
+                PhoneNumber = user.PhoneNumber
+            };
+        }
         public async Task<LoginResponseDto> LoginAsync(LoginDto dto)
         {
             using var transaction = await _unitofwork.BeginTransactionAsync();
@@ -41,8 +74,8 @@ namespace AuthService.Domain.Services
                 var user = await _userManager.FindByEmailAsync(dto.Email);
                 if (user == null)
                 {
-                    _logger.LogWarning($"{dto.Email} Email Not Exists");
-                    throw new UnauthorizedAccessException("Invalid Credentials");
+                    _logger.LogWarning("Email not found: {Email}", dto.Email);
+                        throw new UnauthorizedAccessException("Invalid Credentials");
                 }
                 //if (!user.EmailConfirmed)
                 //{
@@ -55,13 +88,18 @@ namespace AuthService.Domain.Services
                     _logger.LogWarning("Invalid Password");
                     throw new UnauthorizedAccessException("Invalid Credentials");
                 }
+                if (!user.IsActive)
+                {
+                    _logger.LogWarning($"User {dto.Email} is Deactivated");
+                    throw new UnauthorizedAccessException("User is Deactivated");
+                }
                 var roles = await _userManager.GetRolesAsync(user);
                 if(!roles.Any())
                 {
                     _logger.LogWarning("User has no Role Assigned: {UserId}", user.Id);
                     throw new KeyNotFoundException("User has no Role Assigned");
                 }
-                var role = roles.FirstOrDefault();
+                var role = roles.FirstOrDefault() ?? "" ;
                 var accessToken = _jwt.GenerateToken(user, role);
                 var existingRefreshTokens = await _unitofwork.RefreshToken
                     .GetActiveTokensByUserId(user.Id);
@@ -112,7 +150,7 @@ namespace AuthService.Domain.Services
                 var stored = await _unitofwork.RefreshToken.FirstOrDefaultAsync(x => x.Token == hashed);
                 if (stored == null || stored.IsRevoked || stored.ExpiryDate < DateTime.UtcNow)
                 {
-                    _logger.LogWarning($"{Dto.RefreshToken}Invalid Refresh Token");
+                    _logger.LogWarning("Invalid refresh token attempt");
                     throw new UnauthorizedAccessException("Invalid Refresh Token");
                 }
                 var user = await _userManager.FindByIdAsync(stored.UserId);
@@ -127,7 +165,7 @@ namespace AuthService.Domain.Services
                     _logger.LogWarning("User has no Role Assigned: {UserId}", user.Id);
                     throw new KeyNotFoundException("User has no Role Assigned");
                 }
-                var role = roles.FirstOrDefault();
+                var role = roles.FirstOrDefault() ?? "" ;
                 var newAccess = _jwt.GenerateToken(user, role);
                 var newRefresh = _jwt.GenerateRefreshToken();
                 stored.IsRevoked = true;
@@ -168,7 +206,7 @@ namespace AuthService.Domain.Services
             using var transaction = await _unitofwork.BeginTransactionAsync();
             try
             {
-                _logger.LogInformation("Checking if Passward Match ConfirmPassword");
+                _logger.LogInformation("Checking if Password Match ConfirmPassword");
                 if (Dto.Password != Dto.ConfirmPassword)
                 {
                     _logger.LogWarning("Password do not match Confirm Password");
@@ -200,7 +238,7 @@ namespace AuthService.Domain.Services
                 _logger.LogInformation("Checking if Admin user Exists");
                 var adminUsers = await _userManager.GetUsersInRoleAsync(SD.Role_Admin);
                 string assignedRole;
-                if (!(await _userManager.GetUsersInRoleAsync(SD.Role_Admin)).Any())
+                if (!adminUsers.Any())
                 {
                     assignedRole = SD.Role_Admin;
                 }
@@ -228,6 +266,39 @@ namespace AuthService.Domain.Services
                 await transaction.RollbackAsync();
                 throw;
             }
+        }
+
+        public async Task<UserProfileDto> UpdateProfileAsync(string userId, UpdateUserDto dto)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            if(user == null)
+            {
+                _logger.LogWarning("User not found: {UserId}", userId);
+                throw new KeyNotFoundException("User Not Found");
+            }
+            user.Email = dto.Email;
+            user.Name = dto.Name;
+            user.StreetAddress = dto.StreetAddress;
+            user.City = dto.City;
+            user.State = dto.State;
+            user.PostalCode = dto.PostalCode;
+            user.PhoneNumber = dto.PhoneNumber;
+            var result = await _userManager.UpdateAsync(user);
+            if (!result.Succeeded)
+            {
+                _logger.LogWarning("Update Failed");
+                throw new InvalidOperationException("Update Failed");
+            }
+            return new UserProfileDto
+            {
+                Email = user.Email,
+                Name = user.Name,
+                StreetAddress = user.StreetAddress,
+                City = user.City,
+                State = user.State,
+                PostalCode = user.PostalCode,
+                PhoneNumber = user.PhoneNumber
+            };
         }
     }
 }
