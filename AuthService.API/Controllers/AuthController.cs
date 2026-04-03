@@ -1,12 +1,14 @@
-﻿using AuthService.Domain.Interfaces;
+﻿using AuthService.Application.DTOs;
 using AuthService.Domain.DTOs;
+using AuthService.Domain.Entities;
+using AuthService.Domain.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
-using AuthService.Domain.Entities;
 
 namespace AuthService.Controllers
 {
@@ -45,6 +47,29 @@ namespace AuthService.Controllers
                 return BadRequest(ModelState);
             var user = await _authService.RegisterAsync(dto);
             return Ok(user);
+        }
+        [Authorize]
+        [HttpGet("profile")]
+        public async Task<IActionResult> GetProfile()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var result = await _authService.GetProfileAsync(userId);
+            return Ok(result);
+        }
+        [Authorize]
+        [HttpPut("profile")]
+        public async Task<IActionResult> UpdateProfile(UpdateUserDto dto)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var result = await _authService.UpdateProfileAsync(userId, dto);
+            return Ok(result);
+        }
+        [Authorize(Roles = "Admin")]
+        [HttpDelete("deactivate/{userId}")]
+        public async Task<IActionResult> Deactivate(string userId)
+        {
+            var result = await _authService.DeactivateUserAsync(userId);
+            return Ok(result);
         }
     }
 }

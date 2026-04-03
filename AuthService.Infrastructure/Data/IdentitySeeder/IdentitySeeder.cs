@@ -1,5 +1,6 @@
 ﻿using AuthService.Domain.CommonFunctions;
 using Microsoft.AspNetCore.Identity;
+
 namespace AuthService.Infrastructure.Data.IdentitySeeder
 {
     public static class IdentitySeeder
@@ -8,9 +9,9 @@ namespace AuthService.Infrastructure.Data.IdentitySeeder
         {
             string[] roles =
             {
-            SD.Role_Admin,
-            SD.Role_Individual
-        };
+                SD.Role_Admin,
+                SD.Role_Individual
+            };
             foreach (var role in roles)
             {
                 if (!await roleManager.RoleExistsAsync(role))
