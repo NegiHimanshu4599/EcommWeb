@@ -1,4 +1,4 @@
-﻿using BookService.Domain.Entities;
+﻿using BookService.Domain.Entities.Book;
 using BookService.Domain.Interfaces;
 using BookService.Infrastructure.Data;
 

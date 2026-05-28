@@ -1,5 +1,7 @@
 ﻿using BookService.Application.DTOs;
 using BookService.Application.Interfaces;
+using BookService.Application.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,6 +21,12 @@ namespace BookService.API.Controllers
         {
             var getCategories = await _categoryService.GetAllAsync();
             return Ok(getCategories);
+        }
+        [HttpGet("soft-deleted")]
+        public async Task<IActionResult> SoftDeleteBooks()
+        {
+            var getCategory = await _categoryService.GetAllSoftDeleteCategory();
+            return Ok(getCategory);
         }
         [HttpGet("{id}")]
         public async Task<IActionResult> GetCategory(int id)
@@ -47,6 +55,31 @@ namespace BookService.API.Controllers
         {
             await _categoryService.DeleteAsync(id);
             return NoContent();
+        }
+        [HttpDelete("{id}/permanent")]
+        public async Task<IActionResult> PermanentDeleteBook(int id)
+        {
+            await _categoryService.PermanentDeleteAsync(id);
+            return NoContent();
+        }
+        [HttpPatch("{id}/restore")]
+        public async Task<IActionResult> RestoreAsync(int id)
+        {
+            await _categoryService.RestoreAsync(id);
+            return NoContent();
+        }
+        [HttpGet("trash-dashboard")]
+        public async Task<IActionResult> TrashDashboard()
+        {
+            var result = await _categoryService.GetTrashDashboardAsync();
+            return Ok(result);
+        }
+        [HttpPost("trash")]
+        public async Task<IActionResult>GetTrashCategories([FromBody] BookFilterDto dto)
+        {
+            dto.IsDeletedPage = true;
+            var result = await _categoryService.GetTrashCategories(dto);
+            return Ok(result);
         }
     }
 }

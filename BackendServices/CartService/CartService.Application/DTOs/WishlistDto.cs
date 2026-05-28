@@ -10,6 +10,6 @@ namespace CartService.Application.DTOs
     {
         public int WishlistId { get; set; }
         public string UserId { get; set; }
-        public List<int> BookIds { get; set; }
+        public List<int> BookIds { get; set; } = new();
     }
 }

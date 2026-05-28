@@ -10,6 +10,6 @@ namespace CartService.Domain.Entities
     {
         public int Id { get; set; }
         public string UserId { get; set; }
-        public ICollection<WishlistItem> WishlistItems { get; set; }
+        public ICollection<WishlistItem> WishlistItems { get; set; } = new List<WishlistItem>();
     }
 }

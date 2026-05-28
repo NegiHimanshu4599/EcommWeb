@@ -1,0 +1,64 @@
+﻿@model Ecomm.UI.Models.CoverTypeDto.CoverTypeDto
+@{
+    var title = Model.Id != 0 ? "Update CoverType" : "Add CoverType";
+    var save = Model.Id != 0 ? "Update" : "Save";
+    Layout = "_BookLayout";
+}
+<div class="book-page-bg">
+    <div class="admin-card book-card">
+        <!-- HEADER -->
+        <div class="d-flex align-items-center gap-3 mb-4">
+            <a asp-area="Admin" asp-controller="Admin" asp-action="Manage" class="back-btn">
+                <i class="fas fa-arrow-left"></i>
+            </a>
+            <div>
+                <h2 class="page-title mb-1">@title</h2>
+                <div class="bread-text">
+                    Dashboard /
+                    CoverType /
+                    <span>@title</span>
+                </div>
+            </div>
+        </div>
+        <form method="post" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            @if (Model.Id != 0)
+            {
+                <input type="hidden" asp-for="@Model.Id" />
+            }
+            <div class="row">
+                <!-- LEFT -->
+                <div class="col-lg-9">
+                    <div class="row">
+                        <div class="col-md-6 mb-4">
+                            <div class="input-group-custom">
+                                <div class="input-icon">
+                                    <i class="fas fa-bookmark"></i>
+                                </div>
+                                <div class="input-content">
+                                    <label asp-for="@Model.Name" class="form-label"></label>
+                                    <input asp-for="@Model.Name" class="form-control custom-input" placeholder="Enter CoverType" />
+                                    <span asp-validation-for="@Model.Name" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- BUTTONS -->
+                        <div class="d-flex gap-3 mt-4">
+                            <button type="submit" class="btn-admin">
+                                <i class="fas fa-save me-2"></i>
+                                @save
+                            </button>
+                            <a asp-area="Admin" asp-controller="Admin" asp-action="Manage" class="btn-outline-admin">
+                                <i class="fas fa-arrow-left me-2"></i>
+                                BACK TO LIST
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

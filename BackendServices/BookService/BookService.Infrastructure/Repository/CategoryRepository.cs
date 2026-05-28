@@ -1,11 +1,11 @@
-﻿using System;
+﻿using BookService.Domain.Entities.Category;
+using BookService.Domain.Interfaces;
+using BookService.Infrastructure.Data;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using BookService.Domain.Entities;
-using BookService.Domain.Interfaces;
-using BookService.Infrastructure.Data;
 
 namespace BookService.Infrastructure.Repository
 {

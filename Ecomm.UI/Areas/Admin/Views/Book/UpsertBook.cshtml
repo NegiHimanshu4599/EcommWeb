@@ -1,0 +1,212 @@
+﻿@using Ecomm.UI.Common
+@model Ecomm.UI.Models.ViewModels.BookViewModel
+@{
+    ViewData["Title"] = "Upsert";
+    var title = Model.Books.Id != 0 ? "Update Book" : "Add Book";
+    Layout = "_BookLayout";
+    var save = Model.Books.Id != 0 ? "Update" : "Save";
+}
+<div class="book-page-bg">
+    <div class="admin-card book-card">
+        <!-- HEADER -->
+        <div class="d-flex align-items-center gap-3 mb-4">
+            <a  asp-area="Admin" asp-controller="Admin" asp-action="Manage" class="back-btn">
+                <i class="fas fa-arrow-left"></i>
+            </a>
+            <div>
+                <h2 class="page-title mb-1">@title</h2>
+                <div class="bread-text">
+                    Dashboard /
+                    Books /
+                    <span>@title</span>
+                </div>
+            </div>
+        </div>
+        <form method="post" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            @if (Model.Books.Id != 0)
+            {
+                <input type="hidden" asp-for="@Model.Books.Id" />
+                <input type="hidden" asp-for="@Model.Books.ImageUrl" />
+            }
+            <div class="row">
+                <!-- LEFT -->
+                <div class="col-lg-9">
+                    <div class="row">
+                        <div class="col-md-6 mb-4">
+                            <div class="input-group-custom">
+                                <div class="input-icon">
+                                    <i class="fas fa-book-open"></i>
+                                </div>
+                                <div class="input-content">
+                                    <label asp-for="@Model.Books.Title" class="form-label"></label>
+                                    <input asp-for="@Model.Books.Title" class="form-control custom-input" placeholder="Enter book title" />
+                                    <span asp-validation-for="@Model.Books.Title" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            <div class="input-group-custom">
+                                <div class="input-icon">
+                                    <i class="fas fa-layer-group"></i>
+                                </div>
+                                <div class="input-content">
+                                    <label asp-for="@Model.Books.CategoryId" class="form-label"></label>
+                                    <select asp-for="@Model.Books.CategoryId" asp-items="@Model.CategoryList" class="form-select custom-input">
+                                        <option value="">Select category</option>
+                                    </select>
+                                    <span asp-validation-for="@Model.Books.CategoryId" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            <div class="input-group-custom">
+                                <div class="input-icon">
+                                    <i class="fa-solid fa-user"></i>
+                                </div>
+                                <div class="input-content">
+                                    <label asp-for="@Model.Books.Author" class="form-label"></label>
+                                    <input asp-for="@Model.Books.Author" class="form-control custom-input" placeholder="Book Author" />
+                                    <span asp-validation-for="@Model.Books.Author" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            <div class="input-group-custom">
+                                <div class="input-icon">
+                                    <i class="fas fa-bookmark"></i>
+                                </div>
+                                <div class="input-content">
+                                    <label asp-for="@Model.Books.CoverTypeId" class="form-label"></label>
+                                    <select asp-for="@Model.Books.CoverTypeId" asp-items="@Model.CoverTypeList" class="form-select custom-input">
+                                        <option value="">Select Covertype</option>
+                                    </select>
+                                    <span asp-validation-for="@Model.Books.CoverTypeId" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            <div class="input-group-custom">
+                                <div class="input-icon">
+                                    <i class="fa-solid fa-barcode"></i>
+                                </div>
+                                <div class="input-content">
+                                    <label asp-for="@Model.Books.ISBN" class="form-label"></label>
+                                    <input asp-for="@Model.Books.ISBN" class="form-control custom-input" placeholder="Enter ISBN" />
+                                    <span asp-validation-for="@Model.Books.ISBN" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            <div class="input-group-custom">
+                                <div class="input-icon">
+                                    <i class="fa-solid fa-indian-rupee-sign"></i>
+                                </div>
+                                <div class="input-content">
+                                    <label asp-for="@Model.Books.Price" class="form-label"></label>
+                                    <input asp-for="@Model.Books.Price" class="form-control custom-input" placeholder="Enter Price" />
+                                    <span asp-validation-for="@Model.Books.Price" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            <div class="input-group-custom">
+                                <div class="input-icon">
+                                    <i class="fa-solid fa-cube"></i>
+                                </div>
+                                <div class="input-content">
+                                    <label asp-for="@Model.Books.StockQuantity" class="form-label"></label>
+                                    <input asp-for="@Model.Books.StockQuantity" class="form-control custom-input" placeholder="Enter StockQuantity" />
+                                    <span asp-validation-for="@Model.Books.StockQuantity" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            <div class="input-group-custom">
+                                <div class="input-icon">
+                                    <i class="fa-solid fa-image"></i>
+                                </div>
+                                <div class="input-content">
+                                    <label asp-for="@Model.Books.ImageFile" class="form-label"></label>
+                                    <input asp-for="@Model.Books.ImageFile" type="file" class="form-control custom-input" id="imageId" />
+                                    <span asp-validation-for="@Model.Books.ImageFile" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 mb-4">
+                            <div class="input-group-custom">
+                                <div class="input-icon">
+                                    <i class="fa-solid fa-file-lines"></i>
+                                </div>
+                                <div class="input-content">
+                                    <label asp-for="@Model.Books.Description" class="form-label"></label>
+                                    <textarea asp-for="@Model.Books.Description" class="form-control description-box"></textarea>
+                                    <span asp-validation-for="@Model.Books.Description" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- BUTTONS -->
+                    <div class="d-flex gap-3 mt-4">
+                        <button type="submit" class="btn-admin" onclick="return ValData()">
+                            <i class="fas fa-save me-2"></i>
+                            @save
+                        </button>
+                        <a asp-area="Admin" asp-controller="Admin" asp-action="Manage" class="btn-outline-admin">
+                            <i class="fas fa-arrow-left me-2"></i>
+                            BACK TO LIST
+                        </a>
+                    </div>
+                </div>
+                @if (Model.Books.Id != 0)
+                {
+                    <!-- RIGHT -->
+                    <div class="col-lg-3">
+                        <div class="preview-card">
+                            <h4 class="mb-4">Book Preview</h4>
+                            @if (!string.IsNullOrEmpty(Model.Books.ImageUrl))
+                            {
+                                <img src="@($"{SD.BookBaseUrl}{Model.Books.ImageUrl}")" class="preview-image" />
+                            }
+                            else
+                            {
+                                <img src="https://placehold.co/300x400" class="preview-image" />
+                            }
+                            <div class="preview-info">
+                                <p><strong>Title:</strong> @Model.Books.Title</p>
+                                <p><strong>Author:</strong> @Model.Books.Author</p>
+                                <p><strong>ISBN:</strong> @Model.Books.ISBN</p>
+                                <p><strong>Price:</strong> ₹@Model.Books.Price</p>
+                                <p><strong>Stock:</strong> @Model.Books.StockQuantity</p>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </form>
+    </div>
+</div>
+@section Scripts {
+    <script src="https://cdn.tiny.cloud/1/aqd2vamvc1he1brrctzh2khm8nnq3552mb4yszaxauhz1nu6/tinymce/7/tinymce.min.js"></script>
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        tinymce.init({
+            selector: "textarea",
+            height: 230,
+            plugins: "lists link image table code help wordcount",
+            menubar: "file edit view insert format tools table help"
+        });
+        function ValData()
+        {
+            var imageInput = document.getElementById('imageId');
+            // Only required for CREATE
+            var bookId = '@Model.Books.Id';
+            if (bookId == '0' && imageInput.value == "") 
+            {
+                swal("Error", "Please provide product image", "error");
+                return false;
+            }
+            return true;
+        }
+    </script>
+}

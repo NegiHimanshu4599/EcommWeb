@@ -12,6 +12,12 @@ namespace BookService.Domain.Interfaces
         ICategoryRepository Category { get; }
         IBookRepository Book { get; }
         ICoverTypeRepository CoverType { get; }
+        IDeletedBookHistoryRepository DeletedBook { get; }
+        IRestoredBookHistoryRepository RestoredBook { get; }
+        IDeletedCategoryHistory DeletedCategory { get; }
+        IRestoredCategoryHistory RestoredCategory { get; }
+        IDeletedCoverTypeHistoryRepository DeletedCoverType { get; }
+        IRestoredCoverTypeHistoryRepository RestoredCoverType { get; }
         Task SaveAsync();
         Task<IDbContextTransaction> BeginTransactionAsync();
     }

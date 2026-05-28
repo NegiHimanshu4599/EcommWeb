@@ -9,11 +9,13 @@ namespace AuthService.Application.Interfaces
 {
     public interface IAuthService
     {
-        Task<LoginResponseDto> RegisterAsync(RegisterUserDto Dto);
+        Task<RegisterResponseDto> RegisterAsync(RegisterUserDto Dto);
         Task<LoginResponseDto> LoginAsync(LoginDto dto);
         Task<LoginResponseDto> RefreshTokenAsync(RefreshRequestDto Dto);
         Task<UserProfileDto> GetProfileAsync(string userId);
         Task<UserProfileDto> UpdateProfileAsync(string userId, UpdateUserDto dto);
         Task<bool> DeactivateUserAsync(string userId);
+        Task LogoutAsync(LogoutDto dto);
+        Task<LoginResponseDto> GoogleLoginAsync(GoogleLoginDto dto);
     }
 }

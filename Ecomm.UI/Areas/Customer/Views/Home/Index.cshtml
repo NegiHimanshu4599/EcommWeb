@@ -1,0 +1,64 @@
+﻿@using Ecomm.UI.Common
+@model IEnumerable<Ecomm.UI.Models.BookDtos.BookListDto>
+@{
+    Layout = "_HomeLayout";
+}
+<section class="hero-section">
+    <div class="hero-content">
+        <span class="welcome-text">
+            WELCOME TO BOOKSTORE
+        </span>
+        <h1>
+            Discover Your Next
+            <span>Great Read</span>
+        </h1>
+        <p>
+            Explore thousands of books across all genres.
+            Find the perfect book to inspire, learn, and enjoy.
+        </p>
+        <div class="hero-buttons">
+            <a href="#featuredBooks" class="shop-btn">
+                Shop Now
+            </a>
+            <a href="#" class="explore-btn">
+                Explore Categories
+            </a>
+        </div>
+    </div>
+</section>
+<section class="featured-section" id="featuredBooks">
+    <div class="section-header">
+        <h2>Featured Books</h2>
+        <a href="#" class="view-all-btn">
+            View All
+        </a>
+    </div>
+    <div class="book-grid">
+        @foreach (var product in Model)
+        {
+            <div class="book-card">
+                <img src="@($"{SD.BookBaseUrl}{product.ImageUrl}")"
+                     alt="@product.Title" />
+                <div class="book-info">
+                    <h4>@product.Title</h4>
+                    <p class="book-author">
+                        Premium Collection
+                    </p>
+                    <div class="book-price">
+                        <span class="new-price">
+                            ₹@product.Price.ToString("0")
+                        </span>
+                        <span class="old-price">
+                            ₹@((product.Price + 100).ToString("0"))
+                        </span>
+                    </div>
+                    <a asp-area="Customer" asp-controller="Home" asp-action="Details"
+                       asp-route-id="@product.Id"
+                       class="details-btn">
+                        View Details
+                    </a>
+                </div>
+            </div>
+        }
+    </div>
+</section>

@@ -1,0 +1,60 @@
+﻿@model Ecomm.UI.Models.AuthDtos.RegisterUserDto
+@{
+    Layout = "_AuthRegLayout";
+}
+<section class="Register-container">
+    <div class="Register-card">
+        <!-- LEFT SIDE -->
+        <div class="Register-left">  
+            <img src="~/images/register-bg.jpg" class="Register-image" />
+            <div class="Register-overlay">
+                <h1>A New Chapter Begins Here</h1>
+                <p>Join our community and explore endless stories.</p>
+            </div>
+        </div>
+        <!-- RIGHT SIDE -->
+        <div class="Register-right">
+            <div class="form-wrapper">
+                <h2 class="title">CREATE ACCOUNT</h2>
+                <p class="subtitle">Join us and start your reading journey</p>
+                <form method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <!-- TOP FIELDS -->
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <input asp-for="UserName" class="form-control custom-input" placeholder="Full Name" />
+                        </div>
+                        <div class="col-md-6">
+                            <input asp-for="Email" class="form-control custom-input" placeholder="Email" />
+                        </div>
+                        <div class="col-md-6">
+                            <input asp-for="Password" type="password" class="form-control custom-input" placeholder="Password" />
+                        </div>
+                        <div class="col-md-6">
+                            <input asp-for="ConfirmPassword" type="password" class="form-control custom-input" placeholder="Confirm Password" />
+                        </div>
+                    </div>
+                    <!-- BUTTON -->
+                    <button type="submit" class="Register-btn mt-4">
+                        Create Account
+                    </button>
+                </form>
+                <!-- GOOGLE -->
+                <form asp-controller="Auth" asp-action="ExternalLogin" method="post" class="mt-3">
+                    <button type="submit" name="provider" value="Google" class="btn google-btn">
+                        <img src="https://developers.google.com/identity/images/g-logo.png" width="20" />
+                        Sign up with Google
+                    </button>
+                </form>
+                <div class="text-center mt-2">
+                    Already have an account?
+                    <a asp-action="Login" class="link">Login</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

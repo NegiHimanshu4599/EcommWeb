@@ -1,0 +1,43 @@
+﻿@using Ecomm.UI.Common
+@model IEnumerable<Ecomm.UI.Models.BookDtos.BookListDto>
+@{
+    Layout = "_BookLayout";
+}
+<div class="admin-section-card">
+    <div class="section-header">
+        <div class="title-box">
+            <div class="icon-box">
+                <i class="fas fa-book"></i>
+            </div>
+            <h2>Product List</h2>
+        </div>
+    </div>
+
+    <table id="tblData" class="table custom-table w-100">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Price</th>
+                <th>Stock Quantity</th>
+                <th>ImageUrl</th>
+                <th width="180">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Title</td>
+                    <td>@item.Price</td>
+                    <td>@item.StockQuantity</td>
+                    <td>
+                        <img src="@($"{SD.BookBaseUrl}{item.ImageUrl}")" width="60" />
+                    </td>
+                    <td>
+                        <a href="#" class="btn btn-danger btn-sm">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

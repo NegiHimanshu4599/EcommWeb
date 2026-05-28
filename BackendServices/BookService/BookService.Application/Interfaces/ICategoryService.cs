@@ -14,5 +14,10 @@ namespace BookService.Application.Interfaces
         Task<CategoryDto> AddAsync(CategoryDto dto);
         Task UpdateAsync(CategoryDto dto);
         Task DeleteAsync(int id);
+        Task RestoreAsync(int id);
+        Task PermanentDeleteAsync(int id);
+        Task<IEnumerable<CategoryDto>> GetAllSoftDeleteCategory();
+        Task<CategoryTrashDashboardDto> GetTrashDashboardAsync();
+        Task<PagedResult<CategoryTrashDto>> GetTrashCategories(BookFilterDto filterDto);
     }
 }

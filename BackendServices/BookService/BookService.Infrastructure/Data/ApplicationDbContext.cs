@@ -1,4 +1,6 @@
-﻿using BookService.Domain.Entities;
+﻿using BookService.Domain.Entities.Book;
+using BookService.Domain.Entities.Category;
+using BookService.Domain.Entities.CoverType;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -16,6 +18,12 @@ namespace BookService.Infrastructure.Data
         public DbSet<Book> Books { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<CoverType> CoverTypes { get; set; }
+        public DbSet<DeletedBookHistory> DeletedBookHistories { get; set; }
+        public DbSet<RestoredBookHistory> RestoredBookHistories { get; set; }
+        public DbSet<DeletedCategoryHistory> DeletedCategories { get; set; }
+        public DbSet<RestoredCategoryHistory> RestoredCategories { get; set; }
+        public DbSet<DeletedCoverTypeHistory> DeletedCoverTypes { get; set; }
+        public DbSet<RestoredCoverTypeHistory> RestoredCoverTypes { get; set; }
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
@@ -40,6 +48,12 @@ namespace BookService.Infrastructure.Data
                 .WithMany()
                 .HasForeignKey(c => c.ParentCategoryId)
                 .OnDelete(DeleteBehavior.Restrict);
+            builder.Entity<Category>()
+                .HasIndex(c => new { c.Name, c.ParentCategoryId })
+                .IsUnique();
+            builder.Entity<Book>()
+                .Property(b => b.RowVersion)
+                .IsRowVersion();
         }
     }
 }

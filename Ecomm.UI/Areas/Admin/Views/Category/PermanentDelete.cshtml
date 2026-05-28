@@ -1,0 +1,252 @@
+﻿@using Ecomm.UI.Common
+@model Ecomm.UI.Models.ViewModels.CategoryTrashViewModel
+@{
+    Layout = "_TrashLayout";
+    ViewData["Title"] = "Deleted Categories";
+}
+<div class="trash-header">
+    <div class="trash-header-left">
+        <div class="trash-icon-box">
+            <i class="fas fa-layer-group"></i>
+        </div>
+        <div>
+            <h1>Deleted Categories</h1>
+            <p>
+                View and manage all permanently deleted categories
+            </p>
+        </div>
+    </div>
+    <div class="breadcrumb-box">
+        <span>Dashboard</span>
+        <i class="fas fa-chevron-right"></i>
+        <span>Category</span>
+        <i class="fas fa-chevron-right"></i>
+        <span class="active">
+            Deleted Categories
+        </span>
+    </div>
+</div>
+<!-- STATS -->
+<div class="stats-grid">
+    <div class="stats-card">
+        <div class="stats-icon red">
+            <i class="fas fa-trash"></i>
+        </div>
+        <div>
+            <span class="stats-label">
+                Total Deleted Categories
+            </span>
+            <h3>
+                @Model.Dashboard.TotalDeletedCategories
+            </h3>
+            <p>
+                This is total count
+            </p>
+        </div>
+    </div>
+    <div class="stats-card">
+        <div class="stats-icon blue">
+            <i class="fas fa-rotate-left"></i>
+        </div>
+        <div>
+            <span class="stats-label">
+                Restored Categories
+            </span>
+            <h3>
+                @Model.Dashboard.RestoredCategories
+            </h3>
+            <p>
+                Successfully restored
+            </p>
+        </div>
+    </div>
+    <div class="stats-card">
+        <div class="stats-icon green">
+            <i class="fas fa-trash-can"></i>
+        </div>
+        <div>
+            <span class="stats-label">
+                Permanently Deleted
+            </span>
+            <h3>
+                @Model.Dashboard.PermanentlyDeletedCategories
+            </h3>
+            <p>
+                Permanently removed
+            </p>
+        </div>
+    </div>
+    <div class="stats-card">
+        <div class="stats-icon orange">
+            <i class="fas fa-calendar"></i>
+        </div>
+        <div>
+            <span class="stats-label">
+                Last Deleted
+            </span>
+            <h3>
+                @(Model.Dashboard.LastDeletedAt != null ? Model.Dashboard.LastDeletedAt.Value.ToLocalTime().ToString("dd MMM yyyy") : "No Data")
+            </h3>
+            <p>
+                Latest deletion
+            </p>
+        </div>
+    </div>
+</div>
+<!-- TABLE CARD -->
+<div class="trash-card">
+    <!-- TOOLBAR -->
+    <div class="table-toolbar">
+        <form method="get">
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" name="search" value="@Model.Filter.Search" placeholder="Search category..." />
+            </div>
+        </form>
+        <a asp-action="PermanentDelete" class="refresh-btn">
+            <i class="fas fa-rotate-right"></i>
+            Refresh
+        </a>
+    </div>
+    <!-- TABLE -->
+    <div class="table-responsive">
+        <table class="trash-table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Category Name</th>
+                    <th>Parent Category</th>
+                    <th>Deleted On</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.PagedCategories.Data != null && Model.PagedCategories.Data.Any())
+                {
+                    int count = ((Model.PagedCategories.PageNumber - 1) * Model.PagedCategories.PageSize) + 1;
+                    @foreach (var item in Model.PagedCategories.Data)
+                    {
+                        <tr>
+                            <td>
+                                @count.ToString("D2")
+                            </td>
+                            <td>
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="stats-icon blue"
+                                         style="width:55px; height:55px; border-radius:16px; font-size:20px;">
+                                        <i class="fas fa-folder"></i>
+                                    </div>
+                                    <div>
+                                        <div class="fw-600">
+                                            @item.Name
+                                        </div>
+                                        <small class="text-muted">
+                                            @(string.IsNullOrEmpty(item.ParentCategoryName) ? "Root Category" : "Sub Category")
+                                        </small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                @if (!string.IsNullOrEmpty(item.ParentCategoryName))
+                                {
+                                    <span class="badge bg-dark">
+                                        @item.ParentCategoryName
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary">
+                                        Root Category
+                                    </span>
+                                }
+                            </td>
+                            <td>
+                                <div class="deleted-date">
+                                    <span>
+                                        <i class="far fa-calendar"></i>
+                                        @(item.DeletedAt?.ToLocalTime().ToString("dd MMM yyyy"))
+                                    </span>
+                                    <small>
+                                        <i class="far fa-clock"></i>
+                                        @(item.DeletedAt?.ToLocalTime().ToString("hh:mm tt"))
+                                    </small>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="action-buttons">
+                                    <form method="post" asp-action="Restore">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="id" value="@item.Id" />
+                                        <button type="submit"
+                                                class="restore-btn">
+                                            <i class="fas fa-rotate-left"></i>
+                                            Restore
+                                        </button>
+                                    </form>
+                                    <form method="post" asp-action="PermanentDelete">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden"
+                                               name="id" value="@item.Id" />
+                                        <button type="submit" class="delete-btn">
+                                            <i class="fas fa-trash"></i>
+                                            Delete
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        count++;
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="5">
+                            <div class="empty-box">
+                                <i class="fas fa-folder-open"></i>
+                                <h3>
+                                    No Deleted Categories
+                                </h3>
+                                <p>
+                                    Deleted categories will appear here
+                                </p>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <!-- FOOTER -->
+    <div class="table-footer">
+        <div class="table-info">
+            Showing@(((Model.PagedCategories.PageNumber - 1) * Model.PagedCategories.PageSize) + 1)
+            to
+            @(Math.Min(Model.PagedCategories.PageNumber * Model.PagedCategories.PageSize, Model.PagedCategories.TotalCount))
+            of
+            @Model.PagedCategories.TotalCount
+            entries
+        </div>
+        <!-- PAGINATION -->
+        <div class="custom-pagination">
+            @if (Model.PagedCategories.HasPrevious)
+            {
+                <a asp-action="PermanentDelete" asp-route-pageNumber="@(Model.PagedCategories.PageNumber - 1)" asp-route-search="@Model.Filter.Search">
+                    <i class="fas fa-chevron-left"></i>
+                </a>
+            }
+            @for (int i = 1; i <= Model.PagedCategories.TotalPages; i++)
+            {
+                <a asp-action="PermanentDelete" asp-route-pageNumber="@i" asp-route-search="@Model.Filter.Search" class="@(i == Model.PagedCategories.PageNumber ? "active" : "")">
+                    @i
+                </a>
+            }
+            @if (Model.PagedCategories.HasNext)
+            {
+                <a asp-action="PermanentDelete" asp-route-pageNumber="@(Model.PagedCategories.PageNumber + 1)" asp-route-search="@Model.Filter.Search">
+                    <i class="fas fa-chevron-right"></i>
+                </a>
+            }
+        </div>
+    </div>
+</div>

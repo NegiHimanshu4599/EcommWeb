@@ -13,6 +13,9 @@ namespace BookService.Application.DTOs
         public int? CoverTypeId { get; set; }
         public decimal? MinPrice { get; set; }
         public decimal? MaxPrice { get; set; }
+        public bool IsDeletedPage { get; set; }
+        public string? SortBy { get; set; }
+        public bool IsDescending { get; set; }
         public int PageNumber { get; set; } = 1;
         public int PageSize { get; set; } = 10;
     }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using BookService.Domain.Entities;
+using BookService.Domain.Entities.CoverType;
 using BookService.Domain.Interfaces;
 using BookService.Infrastructure.Data;
 

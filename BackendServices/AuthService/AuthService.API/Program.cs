@@ -2,7 +2,6 @@ using AuthService.Application.Interfaces;
 using AuthService.Infrastructure.Data;
 using AuthService.Infrastructure.Data.IdentitySeeder;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -10,24 +9,20 @@ using Microsoft.OpenApi.Models;
 using System.Text;
 using AuthService.Infrastructure.Repository;
 using AuthService.Application.Services;
-using AuthService.API.Middleware;
 using AuthService.Application.Mappings;
 using AuthService.Application.Security;
-using AuthService.Domain.Entities;
 using AuthService.Domain.Interface;
+using AuthService.Domain.Entities;
+using AuthService.API.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
-//if (!builder.Environment.IsDevelopment())
-//{
-//    var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
-//    builder.WebHost.UseUrls($"http://*:{port}");
-//}
 var conStr = builder.Configuration.GetConnectionString("cs") ?? throw new InvalidOperationException("Connection String 'cs' is not Found");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 options.UseSqlServer(conStr));
 // Add services to the container.
 builder.Services.AddControllers();
-builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
 builder.Services.AddScoped<IAuthService, AuthServices>();
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
@@ -96,6 +91,14 @@ builder.Services.Configure<DataProtectionTokenProviderOptions>(opt =>
 {
     opt.TokenLifespan = TimeSpan.FromHours(2);
 });
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowMVC",
+        policy =>
+        {
+            policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
+        });
+});
 var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
@@ -107,8 +110,10 @@ using (var scope = app.Services.CreateScope())
 app.UseSwagger();
 app.UseSwaggerUI();
 app.UseHttpsRedirection();
+app.UseCors("AllowMVC");
 app.UseStaticFiles();
 app.UseGlobalExceptionHandler();
+app.UseMiddleware<CorrelationMiddleware>();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();

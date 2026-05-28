@@ -14,5 +14,10 @@ namespace BookService.Application.Interfaces
         Task<CoverTypeDto> AddAsync(CoverTypeDto dto);
         Task UpdateAsync(CoverTypeDto dto);
         Task DeleteAsync(int id);
+        Task RestoreAsync(int id);
+        Task PermanentDeleteAsync(int id);
+        Task<IEnumerable<CoverTypeDto>> GetAllSoftDeleteCoverType();
+        Task<CoverTypeTrashDashboardDto> GetTrashDashboardAsync();
+        Task<PagedResult<CoverTypeTrashDto>> GetTrashCoverTypes (BookFilterDto filterDto);
     }
 }

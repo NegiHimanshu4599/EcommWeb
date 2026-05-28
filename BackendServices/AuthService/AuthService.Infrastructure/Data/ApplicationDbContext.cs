@@ -18,6 +18,12 @@ namespace AuthService.Infrastructure.Data
                 .WithMany()
                 .HasForeignKey(x => x.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
+            builder.Entity<ApplicationUser>()
+                .HasIndex(x => x.Email)
+                .IsUnique();
+            builder.Entity<ApplicationUser>()
+                .HasIndex(x => x.NormalizedEmail)
+                .IsUnique();
             builder.Entity<RefreshToken>()
                 .Property(x => x.Token)
                 .IsRequired();
@@ -29,3 +35,4 @@ namespace AuthService.Infrastructure.Data
         }
     }
 }
+    
