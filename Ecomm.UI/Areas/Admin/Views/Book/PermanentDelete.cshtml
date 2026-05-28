@@ -1,0 +1,238 @@
+﻿@using Ecomm.UI.Common
+@model Ecomm.UI.Models.ViewModels.TrashBookViewModel
+@{
+    ViewData["Title"] = "Deleted Books";
+    Layout = "~/Views/Shared/_TrashLayout.cshtml";
+}
+<div class="trash-page">
+    <!-- PAGE HEADER -->
+    <div class="trash-header">
+        <div class="trash-header-left">
+            <div class="trash-icon-box">
+                <i class="fas fa-trash"></i>
+            </div>
+            <div>
+                <h1>Deleted Books</h1>
+                <p>
+                    View and manage all permanently deleted books
+                </p>
+            </div>
+        </div>
+        <div class="breadcrumb-box">
+            <span>Dashboard</span>
+            <i class="fas fa-chevron-right"></i>
+            <span>Books</span>
+            <i class="fas fa-chevron-right"></i>
+            <span class="active">Deleted Books</span>
+        </div>
+    </div>
+    <!-- STATS -->
+    <div class="stats-grid">
+        <div class="stats-card">
+            <div class="stats-icon red">
+                <i class="fas fa-trash"></i>
+            </div>
+            <div>
+                <h3>@Model.Dashboard.TotalDeletedBooks</h3>
+                <p>Total Deleted Books</p>
+            </div>
+        </div>
+        <div class="stats-card">
+            <div class="stats-icon blue">
+                <i class="fas fa-rotate-left"></i>
+            </div>
+            <div>
+                <h3>@Model.Dashboard.RestoredBooks</h3>
+                <p>Restored Books</p>
+            </div>
+        </div>
+        <div class="stats-card">
+            <div class="stats-icon green">
+                <i class="fas fa-trash-can"></i>
+            </div>
+            <div>
+                <h3>@Model.Dashboard.PermanentlyDeletedBooks</h3>
+                <p>Permanently Deleted</p>
+            </div>
+        </div>
+        <div class="stats-card">
+            <div class="stats-icon orange">
+                <i class="fas fa-calendar"></i>
+            </div>
+            <div>
+                @{
+                    string lastDeletedText = "No Data";
+
+                    if (Model.Dashboard.LastDeletedAt.HasValue)
+                    {
+                        var days = (DateTime.Now - Model.Dashboard.LastDeletedAt.Value.ToLocalTime()).Days;
+                        lastDeletedText = days switch
+                        {
+                            0 => "Today",
+                            1 => "1 day ago",
+                            _ => $"{days} days ago"
+                        };
+                    }
+                }
+                <h3>@lastDeletedText</h3>
+                <p>Last Deleted</p>
+            </div>
+        </div>
+    </div>
+    <!-- MAIN CARD -->
+    <div class="trash-card">
+        <!-- TOOLBAR -->
+        <div class="table-toolbar">
+            <form method="get" class="search-form">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" name="search" value="@Model.Filter.Search" placeholder="Search by title, author or ISBN..." />
+                </div>
+            </form>
+            <div class="toolbar-actions">
+                <a asp-action="PermanentDelete" class="refresh-btn">
+                    <i class="fas fa-rotate-right"></i>
+                    Refresh
+                </a>
+            </div>
+        </div>
+        <!-- TABLE -->
+        <div class="table-responsive">
+            <table class="trash-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Image</th>
+                        <th>
+                            <a asp-action="PermanentDelete" asp-route-sortBy="title" asp-route-isDescending="@(Model.Filter.SortBy == "title" ? !Model.Filter.IsDescending : false)" asp-route-search="@Model.Filter.Search">
+                                Title
+                                <i class="fas fa-sort"></i>
+                            </a>
+                        </th>
+                        <th>Author</th>
+                        <th>ISBN</th>
+                        <th>
+                            <a asp-action="PermanentDelete" asp-route-sortBy="price" asp-route-isDescending="@(Model.Filter.SortBy == "price" ? !Model.Filter.IsDescending : false)" asp-route-search="@Model.Filter.Search">
+                                Price
+                                <i class="fas fa-sort"></i>
+                            </a>
+                        </th>
+                        <th>Stock</th>
+                        <th>Deleted On</th>
+                        <th class="text-center">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.PagedBooks.Data != null && Model.PagedBooks.Data.Any())
+                    {
+                        int count = ((Model.PagedBooks.PageNumber - 1) * Model.PagedBooks.PageSize);
+                        @foreach (var item in Model.PagedBooks.Data)
+                        {
+                            count++;
+                            <tr>
+                                <td>
+                                    @count.ToString("D2")
+                                </td>
+                                <td>
+                                    <img src="@(string.IsNullOrEmpty(item.ImageUrl) ? "/images/noimage.png" : $"{SD.BookBaseUrl}{item.ImageUrl}")" class="book-img" />
+                                </td>
+                                <td class="fw-600">
+                                    @item.Title
+                                </td>
+                                <td>
+                                    @item.Author
+                                </td>
+                                <td>
+                                    @item.ISBN
+                                </td>
+                                <td class="price">
+                                    ₹@item.Price
+                                </td>
+                                <td>
+                                    @item.StockQuantity
+                                </td>
+                                <td>
+                                    <div class="deleted-date">
+                                        <span>
+                                            <i class="fas fa-calendar-alt"></i>
+                                            @(item.DeletedAt?.ToLocalTime().ToString("dd MMM yyyy"))
+                                        </span>
+                                        <small>
+                                            @(item.DeletedAt?.ToLocalTime().ToString("hh:mm tt"))
+                                        </small>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <!-- RESTORE -->
+                                        <form asp-action="Restore" method="post">
+                                            <input type="hidden" name="id" value="@item.Id" />
+                                            <button type="submit" class="restore-btn">
+                                                <i class="fas fa-rotate-left"></i>
+                                                Restore
+                                            </button>
+                                        </form>
+                                        <!-- DELETE -->
+                                        <form asp-action="PermanentDelete" method="post">
+                                            <input type="hidden" name="id" value="@item.Id" />
+                                            <button type="submit" class="delete-btn">
+                                                <i class="fas fa-trash"></i>
+                                                Delete
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="9">
+                                <div class="empty-box">
+                                    <i class="fas fa-box-open"></i>
+                                    <h3>No Deleted Books Found</h3>
+                                    <p>
+                                        Trash is currently empty.
+                                    </p>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <!-- FOOTER -->
+        <div class="table-footer">
+            <div class="table-info">
+                Showing
+                @(((Model.PagedBooks.PageNumber - 1) * Model.PagedBooks.PageSize) + 1)
+                to
+                @(Math.Min(Model.PagedBooks.PageNumber * Model.PagedBooks.PageSize, Model.PagedBooks.TotalCount))
+                of
+                @Model.PagedBooks.TotalCount entries
+            </div>
+            <!-- PAGINATION -->
+            <div class="custom-pagination">
+                @if (Model.PagedBooks.PageNumber > 1)
+                {
+                    <a asp-action="PermanentDelete" asp-route-pageNumber="@(Model.PagedBooks.PageNumber - 1)" asp-route-search="@Model.Filter.Search" asp-route-sortBy="@Model.Filter.SortBy" asp-route-isDescending="@Model.Filter.IsDescending">
+                        <i class="fas fa-angle-left"></i>
+                    </a>
+                }
+                @for (int i = 1; i <= Model.PagedBooks.TotalPages; i++)
+                {
+                    <a asp-action="PermanentDelete" asp-route-pageNumber="@i" asp-route-search="@Model.Filter.Search" asp-route-sortBy="@Model.Filter.SortBy" asp-route-isDescending="@Model.Filter.IsDescending" class="@(i == Model.PagedBooks.PageNumber ? "active" : "")">
+                        @i
+                    </a>
+                }
+                @if (Model.PagedBooks.PageNumber < Model.PagedBooks.TotalPages)
+                {
+                    <a asp-action="PermanentDelete" asp-route-pageNumber="@(Model.PagedBooks.PageNumber + 1)" asp-route-search="@Model.Filter.Search" asp-route-sortBy="@Model.Filter.SortBy" asp-route-isDescending="@Model.Filter.IsDescending">
+                        <i class="fas fa-angle-right"></i>
+                    </a>
+                }
+            </div>
+        </div>
+    </div>
+</div>

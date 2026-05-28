@@ -1,12 +1,10 @@
-﻿using AuthService.Application.DTOs;
+﻿using AuthService.Domain.Entities;
+using AuthService.Application.DTOs;
 using AuthService.Application.Interfaces;
-using AuthService.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.WebUtilities;
 using System.Security.Claims;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace AuthService.API.Controllers
@@ -56,7 +54,7 @@ namespace AuthService.API.Controllers
             return Ok(result);
         }
         [Authorize]
-        [HttpPut("profile")]
+        [HttpPut("updateProfile")]
         public async Task<IActionResult> UpdateProfile(UpdateUserDto dto)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -68,6 +66,20 @@ namespace AuthService.API.Controllers
         public async Task<IActionResult> Deactivate(string userId)
         {
             var result = await _authService.DeactivateUserAsync(userId);
+            return Ok(result);
+        }
+        [HttpPost("logout")]
+        public async Task<IActionResult> Logout(LogoutDto dto)
+        {
+            await _authService.LogoutAsync(dto);
+            return Ok(new { message = "Logged out successfully" });
+        }
+        [HttpPost("google-login")]
+        public async Task<IActionResult> GoogleLogin([FromBody] GoogleLoginDto model)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+            var result = await _authService.GoogleLoginAsync(model);
             return Ok(result);
         }
     }

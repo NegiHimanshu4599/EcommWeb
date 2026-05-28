@@ -10,5 +10,6 @@ namespace AuthService.Domain.Interface
     public  interface IRefreshTokenRepository:IRepository<RefreshToken>
     {
         Task<IEnumerable<RefreshToken>> GetActiveTokensByUserId(string userId);
+        Task RevokeAllUserTokens(string userId);
     }
 }

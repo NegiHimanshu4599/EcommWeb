@@ -10,7 +10,7 @@ namespace CartService.Application.DTOs
     public class UpdateCartDto
     {
         [Required]
-        public int CartId { get; set; }
+        public int BookId { get; set; }
         [Range(1, 1000)]
         public int Quantity { get; set; }
     }

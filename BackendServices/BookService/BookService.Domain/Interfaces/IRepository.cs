@@ -12,9 +12,10 @@ namespace BookService.Domain.Interfaces
         Task AddAsync(T entity);
         void Update(T entity);
         void Remove(T entity);
-        void Remove(int id);
+        Task Remove(int id);
         void RemoveRange(IEnumerable<T> entities);
         Task<T> GetAsync(int id);
+        IQueryable<T> Query();
         Task<IEnumerable<T>> GetAllAsync(
             Expression<Func<T, bool>> filter = null,
             Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null,

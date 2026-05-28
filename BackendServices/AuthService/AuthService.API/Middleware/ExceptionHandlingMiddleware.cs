@@ -27,14 +27,13 @@ namespace AuthService.API.Middleware
             catch (UnauthorizedAccessException ex)
             {
                 _logger.LogWarning(ex.Message);
-                await HandleExceptionAsync(context,HttpStatusCode.Unauthorized, ex.Message);
+                await HandleExceptionAsync(context, HttpStatusCode.Unauthorized, ex.Message);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Unhandled Exception");
-                //await HandleExceptionAsync(context, HttpStatusCode.InternalServerError,
-                //    ex.Message);
-                await HandleExceptionAsync(context, HttpStatusCode.InternalServerError, ex.ToString());
+                //await HandleExceptionAsync(context, HttpStatusCode.InternalServerError, ex.ToString());
+                await HandleExceptionAsync(context,HttpStatusCode.InternalServerError,"An Error Occurred While Processing Your Request.");
             }
         }
         private static async Task HandleExceptionAsync(
@@ -55,4 +54,3 @@ namespace AuthService.API.Middleware
         }
     }
 }
-

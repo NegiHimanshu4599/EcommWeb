@@ -1,0 +1,419 @@
+body {
+    background: #f7f4f5;
+    font-family: 'Segoe UI', sans-serif;
+    overflow-x: hidden;
+}
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: #f7f4f5;
+    font-family: 'Segoe UI',sans-serif;
+    overflow-x: hidden;
+}
+
+/* WRAPPER */
+.admin-wrapper {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* SIDEBAR */
+.sidebar {
+    width: 260px;
+    min-width: 260px;
+    background: linear-gradient(to bottom,#730026,#980033);
+    padding: 28px 0;
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 1000;
+}
+
+/* LOGO */
+.logo {
+    padding: 0 30px 30px;
+    font-size: 2rem;
+    font-weight: 800;
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+/* MENU */
+.sidebar-menu {
+    list-style: none;
+    padding-left: 0;
+}
+
+    .sidebar-menu li {
+        margin: 10px 14px;
+    }
+
+        .sidebar-menu li a {
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 15px 20px;
+            border-radius: 14px;
+            font-size: 17px;
+            font-weight: 500;
+            transition: .3s;
+        }
+
+            .sidebar-menu li a:hover {
+                background: rgba(255,255,255,.14);
+            }
+
+/* MAIN */
+.admin-main {
+    margin-left: 260px;
+    width: calc(100% - 260px);
+    min-height: 100vh;
+}
+
+/* TOPBAR */
+.topbar {
+    height: 80px;
+    background: white;
+    border-bottom: 1px solid #f1f1f1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 35px;
+    position: sticky;
+    top: 0;
+    z-index: 999;
+}
+
+/* TOP LEFT */
+.top-left i {
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+/* TOP RIGHT */
+.top-right {
+    display: flex;
+    align-items: center;
+    gap: 25px;
+}
+
+    .top-right i {
+        font-size: 1.2rem;
+    }
+
+/* ADMIN USER */
+.admin-user {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+    .admin-user img {
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+
+/* MAIN CONTENT */
+.admin-content {
+    padding: 22px 26px;
+}
+
+/* PAGE BACKGROUND */
+.book-page-bg {
+    position: relative;
+    min-height: calc(100vh - 80px);
+    display: flex;
+    align-items: flex-start;
+}
+
+
+    /* RIGHT SIDE BOOK IMAGE */
+    .book-page-bg::before {
+        content: "";
+        position: fixed;
+        top: 80px;
+        right: 0;
+        width: 38%;
+        height: calc(100vh - 80px);
+        background: linear-gradient(to left, rgba(255,245,247,.92), rgba(255,255,255,.2)), url('/images/UpsertBookbg.png');
+        background-repeat: no-repeat;
+        background-position: center bottom;
+        background-size: contain;
+        opacity: .55;
+        z-index: 0;
+        pointer-events: none;
+    }
+/* FORM CARD */
+.book-card {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    max-width: 1100px;
+    background: rgba(255,255,255,.96);
+    margin-right: auto;
+    border-radius: 28px;
+    padding: 34px 36px;
+    border: 1px solid rgba(255,255,255,.6);
+    box-shadow: 0 10px 35px rgba(122,0,43,.08), 0 2px 10px rgba(0,0,0,.04);
+    backdrop-filter: blur(12px);
+}
+
+/* TITLE */
+.page-title {
+    color: #7a002b;
+    font-size: 2.5rem;
+    font-weight: 800;
+    letter-spacing: -.5px;
+    line-height: 1;
+}
+
+/* BREADCRUMB */
+.bread-text {
+    color: #8c8c8c;
+    font-size: 15px;
+}
+
+    .bread-text span {
+        color: #8b002f;
+        font-weight: 700;
+    }
+
+/* BACK BUTTON */
+.back-btn {
+    width: 62px;
+    height: 62px;
+    border-radius: 18px;
+    background: #fff1f5;
+    color: #8b002f;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    font-size: 22px;
+    transition: .3s;
+}
+
+    .back-btn:hover {
+        background: #8b002f;
+        color: white;
+    }
+
+/* LABEL */
+.form-label {
+    font-size: 15px;
+    font-weight: 700;
+    color: #2b2b2b;
+    margin-bottom: 10px;
+}
+
+/* INPUTS */
+.custom-input {
+    height: 48px !important;
+    border-radius: 16px !important;
+    border: 1px solid #ead9df !important;
+    background: rgba(255,255,255,.92) !important;
+    padding-left: 18px !important;
+    font-size: 15px !important;
+    transition: .3s;
+}
+
+
+    .custom-input:focus {
+        border-color: #8b002f !important;
+        background: white !important;
+        box-shadow: 0 0 0 .25rem rgba(139,0,47,.10) !important;
+    }
+
+/* TEXTAREA */
+.description-box {
+    border-radius: 18px !important;
+    overflow: hidden !important;
+}
+
+/* TINYMCE */
+.tox-tinymce {
+    border-radius: 20px !important;
+    border: 1px solid #ead9df !important;
+    overflow: hidden !important;
+}
+
+/* SAVE BUTTON */
+.btn-admin {
+    background: linear-gradient( 135deg, #7b002c, #a10039 );
+    color: white;
+    border: none;
+    padding: 13px 30px;
+    border-radius: 16px;
+    font-weight: 700;
+    font-size: 15px;
+    box-shadow: 0 8px 20px rgba(139,0,47,.22);
+    transition: .3s;
+}
+
+    .btn-admin:hover {
+        transform: translateY(-2px);
+        color: white;
+    }
+
+/* OUTLINE BUTTON */
+.btn-outline-admin {
+    padding: 16px 38px;
+    border-radius: 16px;
+    border: 2px solid #8b002f;
+    color: #8b002f;
+    text-decoration: none;
+    font-weight: 700;
+    background: white;
+    transition: .3s;
+}
+
+    .btn-outline-admin:hover {
+        background: #8b002f;
+        color: white;
+    }
+
+/* PREVIEW CARD */
+.preview-card {
+    background: rgba(255,255,255,.92);
+    border-radius: 24px;
+    padding: 28px;
+    box-shadow: 0 10px 30px rgba(0,0,0,.06);
+}
+
+.preview-image {
+    width: 100%;
+    height: 430px;
+    object-fit: cover;
+    border-radius: 20px;
+    margin-bottom: 22px;
+}
+
+.preview-info p {
+    margin-bottom: 12px;
+    color: #555;
+    font-size: 15px;
+}
+.row > div {
+    position: relative;
+    z-index: 2;
+}
+.tox.tox-tinymce {
+    min-height: 320px !important;
+}
+.input-group-custom {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+}
+
+.input-icon {
+    width: 42px;
+    height: 42px;
+    min-width: 42px;
+    border-radius: 12px;
+    background: #fff1f5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 34px;
+}
+
+    .input-icon i {
+        color: #8b002f;
+        font-size: 15px;
+    }
+
+.input-content {
+    flex: 1;
+}
+
+
+
+
+/* DROPDOWN */
+
+.book-dropdown .book-dropdown-toggle {
+    color: white;
+    text-decoration: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 18px;
+    border-radius: 12px;
+    transition: 0.3s;
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+    .book-dropdown .book-dropdown-toggle:hover {
+        background: rgba(255,255,255,0.15);
+        transform: translateX(4px);
+        color: white;
+    }
+
+.menu-title {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+/* ARROW */
+
+.dropdown-icon {
+    font-size: 12px;
+    transition: 0.3s;
+}
+
+/* SUBMENU */
+
+.book-submenu {
+    list-style: none;
+    padding-left: 0;
+    margin-top: 8px;
+    display: none;
+}
+
+    .book-submenu li {
+        margin: 6px 0 6px 18px;
+    }
+
+        .book-submenu li a {
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 12px 18px;
+            border-radius: 12px;
+            transition: 0.3s;
+            font-size: 0.95rem;
+            background: rgba(255,255,255,0.06);
+        }
+
+            .book-submenu li a:hover {
+                background: rgba(255,255,255,0.15);
+                transform: translateX(4px);
+            }
+
+/* ACTIVE */
+
+.book-dropdown.active .book-submenu {
+    display: block;
+}
+
+.book-dropdown.active .dropdown-icon {
+    transform: rotate(180deg);
+}
+

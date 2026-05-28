@@ -1,0 +1,82 @@
+﻿@{
+    Layout = "_ManageLayout";
+}
+<div class="manage-bg">
+    <!-- CATEGORY -->
+    <div class="admin-section-card">
+        <div class="section-header">
+            <div class="title-box">
+                <div class="icon-box">
+                    <i class="fas fa-layer-group"></i>
+                </div>
+                <h2>Category</h2>
+            </div>
+            <a asp-area="Admin" asp-controller="Category" asp-action="UpsertCategory" class="btn-add">
+                <i class="fas fa-plus"></i>
+                Add Category
+            </a>
+        </div>
+        <table id="tbCTData" class="table custom-table w-100">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th width="180">Actions</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+    <!-- COVER TYPE -->
+    <div class="admin-section-card">
+        <div class="section-header">
+            <div class="title-box">
+                <div class="icon-box">
+                    <i class="fas fa-bookmark"></i>
+                </div>
+                <h2>Cover Type</h2>
+            </div>
+            <a asp-area="Admin" asp-controller="CoverType" asp-action="UpsertCoverType" class="btn-add">
+                <i class="fas fa-plus"></i>
+                Add CoverType
+            </a>
+        </div>
+        <table id="tbCData" class="table custom-table w-100">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th width="180">Actions</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+    <!-- BOOKS -->
+    <div class="admin-section-card">
+        <div class="section-header">
+            <div class="title-box">
+                <div class="icon-box">
+                    <i class="fas fa-book"></i>
+                </div>
+                <h2>Product List</h2>
+            </div>
+            <a asp-area="Admin" asp-controller="Book" asp-action="UpsertBook" class="btn-add">
+                <i class="fas fa-plus"></i>
+                Add Books
+            </a>
+        </div>
+        <table id="tblData" class="table custom-table w-100">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Price</th>
+                    <th>Stock Quantity</th>
+                    <th width="180">Action</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+@section Scripts
+{
+    <script src="~/js/Book.js"></script>
+    <script src="~/js/Category.js"></script>
+    <script src="~/js/CoverType.js"></script>
+}

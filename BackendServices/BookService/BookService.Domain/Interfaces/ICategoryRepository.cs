@@ -1,4 +1,4 @@
-﻿using BookService.Domain.Entities;
+﻿using BookService.Domain.Entities.Category;
 using System;
 using System.Collections.Generic;
 using System.Linq;

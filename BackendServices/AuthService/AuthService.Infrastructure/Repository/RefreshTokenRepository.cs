@@ -19,8 +19,15 @@ namespace AuthService.Infrastructure.Repository
         }
         public async Task<IEnumerable<RefreshToken>> GetActiveTokensByUserId(string userId)
         {
-            return await _context.RefreshTokens.Where(x => x.UserId == userId && !x.IsRevoked && x.ExpiryDate > DateTime.UtcNow)
-                .ToListAsync();
+            return await _context.RefreshTokens.Where(x => x.UserId == userId && 
+            !x.IsRevoked && x.ExpiryDate > DateTime.UtcNow).ToListAsync();
+        }
+
+        public async Task RevokeAllUserTokens(string userId)
+        {
+           await _context.RefreshTokens.AsNoTracking().Where(x => x.UserId == userId
+           && !x.IsRevoked && x.ExpiryDate > DateTime.UtcNow)
+                .ExecuteUpdateAsync(x => x.SetProperty(p => p.IsRevoked, true));
         }
     }
 }

@@ -1,8 +1,16 @@
+﻿using CartService.API.Middleware;
+using CartService.Application.Interfaces;
+using CartService.Application.Mappings;
+using CartService.Application.Services;
 using CartService.Domain.Interfaces;
 using CartService.Infrastructure.Data;
 using CartService.Infrastructure.Repository;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using Polly;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 //if (!builder.Environment.IsDevelopment())
@@ -16,20 +24,67 @@ options.UseSqlServer(conStr));
 // Add services to the container.
 builder.Services.AddControllers();
 builder.Services.AddScoped<IUnitofWork, UnitofWork>();
-//builder.Services.AddScoped<IBookService, BookServices>();
-//builder.Services.AddScoped<ICategoryService, CategoryService>();
-//builder.Services.AddScoped<ICoverTypeService, CoverTypeService>();
-//builder.Services.AddScoped<IFileService, FileService>();
-//builder.Services.AddAutoMapper(typeof(MappingProfile));
+builder.Services.AddScoped<ICartService, CartServices>();
+builder.Services.AddScoped<IWishlistService, WishlistService>();
+builder.Services.AddAutoMapper(typeof(MappingProfile));
 builder.Services.AddHttpContextAccessor();
+builder.Services.AddHttpClient("BookService", c =>
+{
+    c.BaseAddress = new Uri("https://localhost:7221/"); // BookService URL
+}).AddTransientHttpErrorPolicy(policy =>
+    policy.WaitAndRetryAsync(3, retry =>
+        TimeSpan.FromSeconds(2)));
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        In = ParameterLocation.Header,
+        Description = "Enter JWT",
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        Scheme = "bearer"
+    });
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            new List<string>()
+        }
+    });
+}); 
 builder.Services.Configure<DataProtectionTokenProviderOptions>(opt =>
 {
     opt.TokenLifespan = TimeSpan.FromHours(2);
 });
+builder.Services.AddAuthentication("Bearer")
+    .AddJwtBearer("Bearer", options =>
+    {
+        var jwtSettings = builder.Configuration.GetSection("Jwt");
+
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+
+            ValidIssuer = jwtSettings["Issuer"],
+            ValidAudience = jwtSettings["Audience"],
+
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(jwtSettings["Key"]))
+        };
+    });
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -37,6 +92,8 @@ app.UseSwagger();
 app.UseSwaggerUI();
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+app.UseGlobalExceptionHandler();
+app.UseMiddleware<CorrelationMiddleware>();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();

@@ -14,9 +14,9 @@ namespace CartService.Application.Mappings
     {
         public MappingProfile()
         {
-            CreateMap<Cart, CartDto>().ReverseMap();
-            CreateMap<CartItem, CartItemDto>().ReverseMap();
-            CreateMap<CartDto, CartItem>().ReverseMap();
+            CreateMap<Cart, CartDto>();
+            CreateMap<CartItem, CartItemDto>();
+            CreateMap<AddToCartDto, CartItem>();
         }
     }
 }

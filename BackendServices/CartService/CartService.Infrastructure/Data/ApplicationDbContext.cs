@@ -19,7 +19,19 @@ namespace CartService.Infrastructure.Data
         public DbSet<WishlistItem> WishlistItems { get; set; }
         protected override void OnModelCreating(ModelBuilder builder)
         {
-           
+            base.OnModelCreating(builder);
+            builder.Entity<Cart>()
+                .HasIndex(c => c.UserId)
+                .IsUnique();
+            builder.Entity<CartItem>()
+                .HasIndex(ci => new { ci.CartId, ci.BookId })
+                .IsUnique();
+            builder.Entity<Wishlist>()
+                .HasIndex(w => w.UserId)
+                .IsUnique();
+            builder.Entity<WishlistItem>()
+                .HasIndex(wi => new { wi.WishlistId, wi.BookId })
+                .IsUnique();
         }
     }
 }

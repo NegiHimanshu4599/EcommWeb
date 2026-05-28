@@ -1,12 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using BookService.Domain.Interfaces;
+using BookService.Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
-using BookService.Domain.Interfaces;
-using BookService.Infrastructure.Data;
 
 namespace BookService.Infrastructure.Repository
 {
@@ -62,13 +62,17 @@ namespace BookService.Infrastructure.Repository
         {
             return await dbset.FindAsync(id);
         }
+        public IQueryable<T> Query()
+        {
+            return dbset.AsQueryable();
+        }
         public void Remove(T entity)
         {
             dbset.Remove(entity);
         }
-        public void Remove(int id)
+        public async Task Remove(int id)
         {
-            var entity = dbset.Find(id);
+            var entity =await dbset.FindAsync(id);
             if (entity != null)
                 dbset.Remove(entity);
         }

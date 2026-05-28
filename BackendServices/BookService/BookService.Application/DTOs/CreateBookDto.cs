@@ -27,6 +27,5 @@ namespace BookService.Application.DTOs
         [Required]
         public int StockQuantity { get; set; }
         public IFormFile? ImageFile { get; set; }
-
     }
 }

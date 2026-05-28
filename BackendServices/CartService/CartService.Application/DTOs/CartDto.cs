@@ -8,9 +8,9 @@ namespace CartService.Application.DTOs
 {
     public class CartDto
     {
-        public int CartId { get; set; }
+        public int Id{ get; set; }
         public string UserId { get; set; }
-        public List<CartItemDto> Items { get; set; }
+        public List<CartItemDto> Items { get; set; } = new();
         public decimal TotalPrice { get; set; }
     }
 }

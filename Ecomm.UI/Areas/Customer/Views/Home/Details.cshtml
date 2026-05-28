@@ -1,0 +1,125 @@
+﻿@using Ecomm.UI.Common
+@model Ecomm.UI.Models.BookDtos.BookDetailDto
+@{
+    Layout = "_DetailLayout";
+}
+<section class="book-details-page">
+    <div class="details-wrapper">
+        <!-- LEFT -->
+        <div class="book-gallery">
+
+            <img src="@($"{SD.BookBaseUrl}{Model.ImageUrl}")"
+                 class="main-book-image" />
+            <div class="thumb-images">
+                <img src="@($"{SD.BookBaseUrl}{Model.ImageUrl}")" />
+                <img src="@($"{SD.BookBaseUrl}{Model.ImageUrl}")" />
+                <img src="@($"{SD.BookBaseUrl}{Model.ImageUrl}")" />
+            </div>
+        </div>
+        <!-- CENTER -->
+        <div class="book-info-area">
+            <span class="best-badge">
+                ⭐ Bestseller
+            </span>
+            <h1>@Model.Title</h1>
+            <h5>by @Model.Author</h5>
+            <div class="rating-row">
+                ⭐⭐⭐⭐☆
+                <span>4.6 (128 reviews)</span>
+            </div>
+            <div class="book-meta-area">
+                <p>
+                    <strong>ISBN:</strong>
+                    @Model.ISBN
+                </p>
+                <p>
+                    <strong>Category:</strong>
+                    @Model.CategoryName
+                </p>
+                <p>
+                    <strong>Cover Type:</strong>
+                    @Model.CoverTypeName
+                </p>
+                <p>
+                    <strong>Language:</strong>
+                    English
+                </p>
+                <p>
+                    <strong>Stock:</strong>
+
+                    @if (Model.StockQuantity > 0)
+                    {
+                        <span class="stock-green">
+                            In Stock (@Model.StockQuantity available)
+                        </span>
+                    }
+                    else
+                    {
+                        <span class="stock-red">
+                            Out of Stock
+                        </span>
+                    }
+                </p>
+            </div>
+            <hr />
+            <div class="about-book">
+                <h3>About the Book</h3>
+                <p>
+                    @Html.Raw(Model.Description)
+                </p>
+            </div>
+            <div class="tags">
+                <span>Fantasy</span>
+                <span>Adventure</span>
+                <span>Bestseller</span>
+            </div>
+        </div>
+        <div class="purchase-box">
+            <div class="price-area">
+                <h2>₹@Model.Price</h2>
+                <del>₹@(Model.Price + 100)</del>
+                <span class="discount-box">
+                    8% OFF
+                </span>
+            </div>
+            <p class="tax-text">
+                Inclusive of all taxes
+            </p>
+            <div class="qty-box">
+                <button>-</button>
+                <span>1</span>
+                <button>+</button>
+            </div>
+            <button class="cart-button">
+                <i class="fa-solid fa-cart-shopping"></i>
+                Add to Cart
+            </button>
+            <button class="buy-button">
+                Buy Now
+            </button>
+            <div class="shipping-area">
+                <div>
+                    🚚
+                    <span>
+                        <strong>Free Shipping</strong><br />
+                        On orders over ₹499
+                    </span>
+                </div>
+                <div>
+                    ↩️
+                    <span>
+                        <strong>Easy Returns</strong><br />
+                        30 days return policy
+                    </span>
+                </div>
+                <div>
+                    🔒
+                    <span>
+                        <strong>Secure Payment</strong><br />
+                        100% secure checkout
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

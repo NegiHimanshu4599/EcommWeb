@@ -11,5 +11,8 @@ namespace BookService.Application.DTOs
         public int Id { get; set; }
         public string Name { get; set; }
         public int? ParentCategoryId { get; set; }
+        public string? ParentCategoryName { get; set; }
+        public string? DisplayName { get; set; }
+        public bool IsParentCategory { get; set; }
     }
 }

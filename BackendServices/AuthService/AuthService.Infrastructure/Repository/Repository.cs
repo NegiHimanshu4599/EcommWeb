@@ -1,11 +1,8 @@
 ﻿using AuthService.Domain.Interface;
 using AuthService.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using Microsoft.EntityFrameworkCore.Storage;
 using System.Linq.Expressions;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace AuthService.Infrastructure.Repository
@@ -41,7 +38,8 @@ namespace AuthService.Infrastructure.Repository
             }
             return await query.FirstOrDefaultAsync();
         }
-        public async Task<IEnumerable<T>> GetAllAsync(Expression<Func<T, bool>> filter = null, Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null, string includeProperties = null)
+        public async Task<IEnumerable<T>> GetAllAsync(Expression<Func<T, bool>> filter = null, 
+            Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null, string includeProperties = null)
         {
             IQueryable<T> query = dbset;
             if (filter != null)
@@ -66,9 +64,9 @@ namespace AuthService.Infrastructure.Repository
         {
             dbset.Remove(entity);
         }
-        public void Remove(int id)
+        public async Task Remove(int id)
         {
-            var entity = dbset.Find(id);
+            var entity =await dbset.FindAsync(id);
             if (entity != null)
                 dbset.Remove(entity);
         }
@@ -79,6 +77,14 @@ namespace AuthService.Infrastructure.Repository
         public void Update(T entity)
         {
             dbset.Update(entity);
+        }
+        public async Task SaveAsync()
+        {
+            await _context.SaveChangesAsync();
+        }
+        public async Task<IDbContextTransaction> BeginTransactionAsync()
+        {
+            return await  _context.Database.BeginTransactionAsync();
         }
     }
 }
