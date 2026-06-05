@@ -7,11 +7,15 @@
         "Action": "Start"
       },
       {
+        "Path": "BackendServices\\BookService\\BookService.API\\BookService.API.csproj",
+        "Action": "Start"
+      },
+      {
         "Path": "Ecomm.UI\\Ecomm.UI.csproj",
         "Action": "Start"
       },
       {
-        "Path": "BackendServices\\BookService\\BookService.API\\BookService.API.csproj",
+        "Path": "BackendServices\\CartService\\CartService.API\\CartService.API.csproj",
         "Action": "Start"
       }
     ]

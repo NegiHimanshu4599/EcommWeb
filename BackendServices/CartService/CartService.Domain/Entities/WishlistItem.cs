@@ -1,5 +1,4 @@
-﻿
-namespace CartService.Domain.Entities
+﻿namespace CartService.Domain.Entities
 {
     public class WishlistItem
     {

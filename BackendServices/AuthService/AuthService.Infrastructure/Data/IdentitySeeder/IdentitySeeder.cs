@@ -1,6 +1,5 @@
 ﻿using AuthService.Domain.CommonFunctions;
 using Microsoft.AspNetCore.Identity;
-
 namespace AuthService.Infrastructure.Data.IdentitySeeder
 {
     public static class IdentitySeeder

@@ -3,8 +3,10 @@ using Ecomm.UI.Models;
 using Ecomm.UI.Models.BookDtos;
 using Ecomm.UI.Models.ViewModels;
 using Ecomm.UI.ServicesConnection;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace Ecomm.UI.Areas.Customer.Controllers

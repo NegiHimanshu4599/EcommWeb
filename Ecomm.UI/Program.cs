@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.HttpOverrides;
 var builder = WebApplication.CreateBuilder(args);
 SD.AuthBaseUrl = builder.Configuration["AuthUrl"];
 SD.BookBaseUrl = builder.Configuration["BookUrl"];
+SD.CartBaseUrl = builder.Configuration["CartUrl"];
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();

@@ -24,8 +24,9 @@ namespace AuthService.Application.Security
             {
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new Claim(ClaimTypes.NameIdentifier,user.Id),
+                new Claim(ClaimTypes.Name, user.Name ?? ""),
                 new Claim(ClaimTypes.Email,user.Email ?? ""),
-                new Claim(ClaimTypes.Role,role??"")
+                new Claim(ClaimTypes.Role,role ?? "")
             };
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
             var token = new JwtSecurityToken(

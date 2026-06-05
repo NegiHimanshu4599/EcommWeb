@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
 using CartService.Application.DTOs;
+using CartService.Application.Exceptions;
 using CartService.Application.Interfaces;
 using CartService.Domain.Entities;
 using CartService.Domain.Interfaces;
+using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 using Microsoft.Extensions.Logging;
 using System.Net.Http.Json;
 
@@ -28,6 +30,7 @@ namespace CartService.Application.Services
             {
                 cart = new Cart
                 {
+                    CreatedAt = DateTime.UtcNow,
                     UserId = userId
                 };
                 await _unitofwork.Cart.AddAsync(cart);
@@ -38,13 +41,18 @@ namespace CartService.Application.Services
                 _logger.LogWarning("BookService failed for BookId {BookId}", dto.BookId);
                 throw new KeyNotFoundException("Book not found");
             }
-            var book = await response.Content.ReadFromJsonAsync<BookDto>();
+            var book = await response.Content.ReadFromJsonAsync<BookListDto>();
             if (book == null)
             {
                 _logger.LogWarning("Book data null for BookId {BookId}", dto.BookId);
                 throw new KeyNotFoundException("Book data null");
             }
             var existingItem = cart.CartItems.FirstOrDefault(x => x.BookId == dto.BookId);
+            var totalQuantity = existingItem != null ? existingItem.Quantity + dto.Quantity: dto.Quantity;
+            if (totalQuantity > book.StockQuantity)
+            {
+                throw new InsufficientStockException("Not enough stock available");
+            }
             if (existingItem != null)
             {
                 existingItem.Quantity += dto.Quantity;
@@ -58,6 +66,7 @@ namespace CartService.Application.Services
                     Price = book.Price
                 });
             }
+            cart.UpdatedAt = DateTime.UtcNow;
             await _unitofwork.SaveAsync();
             return await GetCartAsync(userId);
         }
@@ -67,7 +76,12 @@ namespace CartService.Application.Services
             if (cart == null)
             {
                 _logger.LogWarning("Returning null cart for user {UserId} because no cart was found", userId);
-                return null;
+                return new CartDto
+                {
+                    UserId = userId,
+                    Items = new List<CartItemDto>(),
+                    TotalPrice = 0
+                };
             }
             var cartDto = _mapper.Map<CartDto>(cart);
             var bookIds = cart.CartItems.Select(x => x.BookId).ToList();
@@ -78,10 +92,12 @@ namespace CartService.Application.Services
             var response = await _httpClient.PostAsJsonAsync("/api/Book/bulk", bookIds);
             if (!response.IsSuccessStatusCode)
             {
-                _logger.LogError("BookService bulk API failed. Status: {Status}", response.StatusCode);
-                throw new Exception("BookService failed");
+                //throw new ServiceUnavailableException("BookService failed");
+                var error = await response.Content.ReadAsStringAsync();
+                _logger.LogError("BookService error: {Error}", error);
+                throw new ServiceUnavailableException(error);
             }
-            var bookList = await response.Content.ReadFromJsonAsync<List<BookDto>>();
+            var bookList = await response.Content.ReadFromJsonAsync<IEnumerable<BookListDto>>();
             if (bookList == null || !bookList.Any())
             {
                 _logger.LogWarning("No book data returned from BookService");
@@ -110,25 +126,49 @@ namespace CartService.Application.Services
         public async Task<CartDto> UpdateQuantityAsync(string userId, UpdateCartDto dto)
         {
             var cart = await _unitofwork.Cart.FirstOrDefaultAsync(x => x.UserId == userId, "CartItems");
-            var item = cart?.CartItems.FirstOrDefault(x => x.BookId == dto.BookId);
+            if(cart == null)
+            {
+                _logger.LogWarning("Cart not found for user {UserId} when updating quantity", userId);
+                throw new KeyNotFoundException("Cart not found");
+            }
+            var item = cart.CartItems.FirstOrDefault(x => x.BookId == dto.BookId);
             if (item == null)
             {
                 _logger.LogWarning("Item with book ID {BookId} not found in cart for user {UserId}", dto.BookId, userId);
                 throw new KeyNotFoundException("Item not found");
             }
+            var response = await _httpClient.GetAsync($"/api/Book/{dto.BookId}");
+            if (!response.IsSuccessStatusCode)
+            {
+                _logger.LogWarning("BookService failed for BookId {BookId}", dto.BookId);
+                throw new KeyNotFoundException("Book not found");
+            }
+            var book =await response.Content.ReadFromJsonAsync<BookListDto>();
+            if(book == null)
+            {
+                _logger.LogWarning("No book data returned from BookService");
+                throw new KeyNotFoundException("No book details found");
+            }
+            if (dto.Quantity > book.StockQuantity)
+            {
+                throw new InsufficientStockException("Not enough stock available");
+            }
             item.Quantity = dto.Quantity;
+            cart.UpdatedAt = DateTime.UtcNow;
             await _unitofwork.SaveAsync();
             return await GetCartAsync(userId);
         }
         public async Task RemoveItemAsync(string userId, int bookId)
         {
             var cart = await _unitofwork.Cart.FirstOrDefaultAsync(x => x.UserId == userId, "CartItems");
-            var item = cart?.CartItems.FirstOrDefault(x => x.BookId == bookId);
-            if (item != null)
-            {
-                cart.CartItems.Remove(item);
-                await _unitofwork.SaveAsync();
-            }
+            if (cart == null)
+                throw new KeyNotFoundException("Cart not found");
+            var item = cart.CartItems.FirstOrDefault(x => x.BookId == bookId);
+            if (item == null)
+                throw new KeyNotFoundException("Item not found");
+            cart.CartItems.Remove(item);
+            cart.UpdatedAt = DateTime.UtcNow;
+            await _unitofwork.SaveAsync();            
         }
         public async Task ClearCartAsync(string userId)
         {
@@ -137,6 +177,7 @@ namespace CartService.Application.Services
             {
                 _logger.LogInformation("Clearing all items from cart for user {UserId}", userId);
                 cart.CartItems.Clear();
+                cart.UpdatedAt = DateTime.UtcNow;
                 await _unitofwork.SaveAsync();
             }
         }

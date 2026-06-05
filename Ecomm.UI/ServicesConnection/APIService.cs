@@ -42,11 +42,10 @@ namespace Ecomm.UI.ServicesConnection
             var content = await response.Content.ReadAsStringAsync();
             if (string.IsNullOrWhiteSpace(content))
                 return default;
-            return JsonSerializer.Deserialize<T>(content,
-                new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true
-                });
+            return JsonSerializer.Deserialize<T>(content,new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            });
         }
         public async Task<T> PostAsync<T>(string url, object data, string token = null)
         {
@@ -61,8 +60,7 @@ namespace Ecomm.UI.ServicesConnection
             var result = await response.Content.ReadAsStringAsync();
             if (string.IsNullOrWhiteSpace(result))
                 return default;
-            return JsonSerializer.Deserialize<T>(result,
-                new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            return JsonSerializer.Deserialize<T>(result,new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
         }
         public async Task<T> PutAsync<T>(string url, object data, string token = null)
         {
@@ -75,8 +73,7 @@ namespace Ecomm.UI.ServicesConnection
             var result = await response.Content.ReadAsStringAsync();
             if (string.IsNullOrWhiteSpace(result))
                 return default;
-            return JsonSerializer.Deserialize<T>(result,
-                new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            return JsonSerializer.Deserialize<T>(result, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
         }
         public async Task DeleteAsync(string url, string token = null)
         {
@@ -166,10 +163,9 @@ namespace Ecomm.UI.ServicesConnection
                 return;
             var handler = new JwtSecurityTokenHandler();
             var jwt = handler.ReadJwtToken(token);
-            if (jwt.ValidTo > DateTime.UtcNow)
+            if (jwt.ValidTo > DateTime.UtcNow.AddMinutes(1))
                 return;
-            var refreshToken =
-                _httpContextAccessor.HttpContext?.Session.GetString( "RefreshToken");
+            var refreshToken = _httpContextAccessor.HttpContext?.Session.GetString( "RefreshToken");
             if (string.IsNullOrEmpty(refreshToken))
                 return;
             var client = _clientFactory.CreateClient();
@@ -179,8 +175,7 @@ namespace Ecomm.UI.ServicesConnection
             if (!response.IsSuccessStatusCode)
                 return;
             var json = await response.Content.ReadAsStringAsync();
-            var result = JsonSerializer.Deserialize<LoginResponseDto>(json,
-                new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            var result = JsonSerializer.Deserialize<LoginResponseDto>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
             _httpContextAccessor.HttpContext.Session.SetString("JWT", result.AccessToken);
             _httpContextAccessor.HttpContext.Session.SetString("RefreshToken", result.RefreshToken);
         }

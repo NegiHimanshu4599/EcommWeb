@@ -1,5 +1,5 @@
-﻿using AutoMapper;
-using CartService.Application.DTOs;
+﻿using CartService.Application.DTOs;
+using CartService.Application.Exceptions;
 using CartService.Application.Interfaces;
 using CartService.Domain.Entities;
 using CartService.Domain.Interfaces;
@@ -7,22 +7,22 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
+using System.Net;
+using System.Net.Http.Json;
+
 
 namespace CartService.Application.Services
 {
     public class WishlistService : IWishlistService
     {
         private readonly IUnitofWork _unitofwork;
-        private readonly IMapper _mapper;
         private readonly ILogger<WishlistService> _logger;
-        public WishlistService(ILogger<WishlistService>logger,IMapper mapper,IUnitofWork unitofwork)
+        private readonly HttpClient _httpClient;
+        public WishlistService(IHttpClientFactory httpClientFactory ,ILogger<WishlistService> logger, IUnitofWork unitofwork)
         {
+            _httpClient = httpClientFactory.CreateClient("BookService");
             _unitofwork = unitofwork;
             _logger = logger;
-            _mapper = mapper;
         }
         public async Task AddAsync(string userId, int bookId)
         {
@@ -31,6 +31,7 @@ namespace CartService.Application.Services
             {
                 wishlist = new Wishlist
                 {
+                    CreatedAt = DateTime.UtcNow,
                     UserId = userId
                 };
                 await _unitofwork.Wishlist.AddAsync(wishlist);
@@ -41,10 +42,21 @@ namespace CartService.Application.Services
                 _logger.LogWarning("Book {BookId} already in wishlist", bookId);
                 return;
             }
+            var response = await _httpClient.GetAsync($"/api/Book/{bookId}");
+            if (response.StatusCode == HttpStatusCode.NotFound)
+            {
+                throw new KeyNotFoundException("Book not found");
+            }
+            if (!response.IsSuccessStatusCode)
+            {
+                var error = await response.Content.ReadAsStringAsync();
+                throw new ServiceUnavailableException(error);
+            }
             wishlist.WishlistItems.Add(new WishlistItem
             {
                 BookId = bookId
             });
+            wishlist.UpdatedAt = DateTime.UtcNow;
             await _unitofwork.SaveAsync();
         }
         public async Task<WishlistDto> GetAsync(string userId)
@@ -54,15 +66,47 @@ namespace CartService.Application.Services
             if (wishlist == null)
             {
                 _logger.LogWarning("Wishlist not found for user {UserId}", userId);
-                return null;
+                throw new KeyNotFoundException("Wishlist not found For User");
             }
+            var bookIds = wishlist.WishlistItems.Select(x => x.BookId).ToList();
+            if (!bookIds.Any())
+            {
+                return new WishlistDto
+                {
+                    WishlistId = wishlist.Id,
+                    UserId = wishlist.UserId,
+                    Items = new List<WishlistItemDto>()
+                };
+            }
+            var response = await _httpClient.PostAsJsonAsync("/api/Book/bulk", bookIds);
+            if (!response.IsSuccessStatusCode)
+            {
+                var error = await response.Content.ReadAsStringAsync();
+                _logger.LogError("BookService error: {Error}", error);
+                throw new ServiceUnavailableException(error);
+            }
+            var books = await response.Content.ReadFromJsonAsync<IEnumerable<BookListDto>>();
+            if (books == null)
+            {
+                throw new ServiceUnavailableException("Book data could not be loaded");
+            }
+            var booksDictionary = books.ToDictionary(x => x.Id);
             var dto = new WishlistDto
             {
                 WishlistId = wishlist.Id,
                 UserId = wishlist.UserId,
-                BookIds = wishlist.WishlistItems
-                    .Select(x => x.BookId)
-                    .ToList()
+                Items = wishlist.WishlistItems.Select(x =>
+                {
+                    booksDictionary.TryGetValue(x.BookId, out var book);
+
+                    return new WishlistItemDto
+                    {
+                        BookId = x.BookId,
+                        Title = book?.Title,
+                        Price = book?.Price ?? 0,
+                        ImageUrl = book?.ImageUrl
+                    };
+                }).ToList()
             };
             return dto;
         }
@@ -70,15 +114,20 @@ namespace CartService.Application.Services
         {
             _logger.LogInformation("Removing book {BookId} from wishlist for user {UserId}", bookId, userId);
             var wishlist = await _unitofwork.Wishlist.FirstOrDefaultAsync(x => x.UserId == userId, "WishlistItems");
-            var item = wishlist?.WishlistItems.FirstOrDefault(x => x.BookId == bookId);
+            if (wishlist == null)
+            {
+                throw new KeyNotFoundException("Wishlist not found");
+            }
+            var item = wishlist.WishlistItems.FirstOrDefault(x => x.BookId == bookId);
             if (item != null)
             {
                 wishlist.WishlistItems.Remove(item);
+                wishlist.UpdatedAt = DateTime.UtcNow;
                 await _unitofwork.SaveAsync();
             }
             else
             {
-                _logger.LogWarning("Book {BookId} not found in wishlist", bookId);
+                throw new KeyNotFoundException("Item not Found");
             }
         }
     }

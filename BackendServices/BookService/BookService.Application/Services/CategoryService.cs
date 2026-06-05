@@ -3,7 +3,6 @@ using BookService.Application.DTOs;
 using BookService.Application.Interfaces;
 using BookService.Domain.Entities.Category;
 using BookService.Domain.Interfaces;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
