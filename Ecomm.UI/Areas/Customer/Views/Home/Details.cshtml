@@ -5,118 +5,255 @@
 }
 <section class="book-details-page">
     <div class="details-wrapper">
-        <!-- LEFT -->
+        <!-- LEFT SIDE -->
         <div class="book-gallery">
-
-            <img src="@($"{SD.BookBaseUrl}{Model.ImageUrl}")"
-                 class="main-book-image" />
+            <img src="@($"{SD.BookBaseUrl}{Model.ImageUrl}")" class="main-book-image" alt="@Model.Title" />
             <div class="thumb-images">
-                <img src="@($"{SD.BookBaseUrl}{Model.ImageUrl}")" />
-                <img src="@($"{SD.BookBaseUrl}{Model.ImageUrl}")" />
-                <img src="@($"{SD.BookBaseUrl}{Model.ImageUrl}")" />
+                <img src="@($"{SD.BookBaseUrl}{Model.ImageUrl}")" alt="@Model.Title" />
+                <img src="@($"{SD.BookBaseUrl}{Model.ImageUrl}")"
+                     alt="@Model.Title" />
+                <img src="@($"{SD.BookBaseUrl}{Model.ImageUrl}")"
+                     alt="@Model.Title" />
             </div>
         </div>
         <!-- CENTER -->
         <div class="book-info-area">
-            <span class="best-badge">
-                ⭐ Bestseller
-            </span>
+            @if (Model.StockQuantity > 20)
+            {
+                <span class="best-badge">
+                    ⭐ Bestseller
+                </span>
+            }
+
             <h1>@Model.Title</h1>
-            <h5>by @Model.Author</h5>
+
+            <h5>
+                by @Model.Author
+            </h5>
+
             <div class="rating-row">
                 ⭐⭐⭐⭐☆
-                <span>4.6 (128 reviews)</span>
+                <span>
+                    4.6 (128 Reviews)
+                </span>
             </div>
+
             <div class="book-meta-area">
+
                 <p>
                     <strong>ISBN:</strong>
                     @Model.ISBN
                 </p>
+
                 <p>
                     <strong>Category:</strong>
                     @Model.CategoryName
                 </p>
+
                 <p>
                     <strong>Cover Type:</strong>
                     @Model.CoverTypeName
                 </p>
+
                 <p>
                     <strong>Language:</strong>
                     English
                 </p>
-                <p>
-                    <strong>Stock:</strong>
 
-                    @if (Model.StockQuantity > 0)
+                <p>
+                    <strong>Availability:</strong>
+
+                    @if (Model.StockQuantity > 10)
                     {
                         <span class="stock-green">
-                            In Stock (@Model.StockQuantity available)
+                            In Stock (@Model.StockQuantity Available)
+                        </span>
+                    }
+                    else if (Model.StockQuantity > 0)
+                    {
+                        <span style="color:#d97706;font-weight:600;">
+                            Only @Model.StockQuantity Left
                         </span>
                     }
                     else
                     {
                         <span class="stock-red">
-                            Out of Stock
+                            Out Of Stock
                         </span>
                     }
+
                 </p>
+
             </div>
+
             <hr />
+
             <div class="about-book">
-                <h3>About the Book</h3>
+
+                <h3>
+                    About The Book
+                </h3>
+
                 <p>
                     @Html.Raw(Model.Description)
                 </p>
+
             </div>
+
             <div class="tags">
-                <span>Fantasy</span>
-                <span>Adventure</span>
-                <span>Bestseller</span>
+
+                <span>@Model.CategoryName</span>
+
+                @if (!string.IsNullOrEmpty(Model.CoverTypeName))
+                {
+                    <span>@Model.CoverTypeName</span>
+                }
+
+                <span>Premium Edition</span>
+
             </div>
+
         </div>
+
+        <!-- RIGHT SIDE -->
         <div class="purchase-box">
+
             <div class="price-area">
-                <h2>₹@Model.Price</h2>
-                <del>₹@(Model.Price + 100)</del>
+
+                <h2>
+                    ₹@Model.Price
+                </h2>
+
+                <del>
+                    ₹@(Model.Price + 100)
+                </del>
+
                 <span class="discount-box">
-                    8% OFF
+                    SAVE ₹100
                 </span>
+
             </div>
+
             <p class="tax-text">
                 Inclusive of all taxes
             </p>
-            <div class="qty-box">
-                <button>-</button>
-                <span>1</span>
-                <button>+</button>
-            </div>
-            <button class="cart-button">
-                <i class="fa-solid fa-cart-shopping"></i>
-                Add to Cart
-            </button>
-            <button class="buy-button">
-                Buy Now
-            </button>
+
+            @if (TempData["error"] != null)
+            {
+                <div class="alert alert-danger mb-3">
+                    @TempData["error"]
+                </div>
+            }
+
+            @if (TempData["success"] != null)
+            {
+                <div class="alert alert-success mb-3">
+                    @TempData["success"]
+                </div>
+            }
+
+            @if (Model.StockQuantity > 0)
+            {
+                <form asp-area="Customer"
+                      asp-controller="Cart"
+                      asp-action="AddToCart"
+                      method="post">
+
+                    @Html.AntiForgeryToken()
+                    <input type="hidden"
+                           name="BookId"
+                           value="@Model.Id" />
+
+                    <div class="qty-box">
+
+                        <label>
+                            Quantity
+                        </label>
+                        <input type="number"
+                               name="Quantity"
+                               value="1"
+                               min="1"
+                               max="@Model.StockQuantity"
+                               class="form-control" />
+
+                    </div>
+
+                    <button type="submit"
+                            class="cart-button">
+
+                        <i class="fas fa-shopping-cart"></i>
+
+                        Add To Cart
+
+                    </button>
+
+                </form>
+
+                <br />
+
+                <button class="buy-button">
+
+                    <i class="fas fa-bolt"></i>
+
+                    Buy Now
+
+                </button>
+
+                <br />
+                <br />
+
+                <button class="buy-button">
+
+                    <i class="far fa-heart"></i>
+
+                    Add To Wishlist
+
+                </button>
+
+                <br />
+                <br />
+
+                <div style="font-size:14px;color:#666;">
+                    <strong>Expected Delivery:</strong>
+                    3 - 5 Business Days
+                </div>
+            }
+            else
+            {
+                <button class="cart-button"
+                        disabled>
+
+                    Out Of Stock
+
+                </button>
+            }
+
             <div class="shipping-area">
+
                 <div>
+
                     🚚
+
                     <span>
                         <strong>Free Shipping</strong><br />
-                        On orders over ₹499
+                        On Orders Above ₹499
                     </span>
+
                 </div>
+
                 <div>
+
                     ↩️
                     <span>
                         <strong>Easy Returns</strong><br />
-                        30 days return policy
+                        30 Day Return Policy
                     </span>
                 </div>
                 <div>
                     🔒
                     <span>
                         <strong>Secure Payment</strong><br />
-                        100% secure checkout
+                        100% Secure Checkout
                     </span>
                 </div>
             </div>

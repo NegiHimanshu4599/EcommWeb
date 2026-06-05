@@ -37,52 +37,28 @@
 
         <div class="dropdown-menu dropdown-menu-end">
 
-            <a class="dropdown-item"
-               asp-area="Customer"
-               asp-controller="Auth"
-               asp-action="CompleteProfile">
-
+            <a class="dropdown-item" asp-area="Customer" asp-controller="Auth" asp-action="CompleteProfile">
                 <i class="fa-solid fa-id-card"></i>
                 Edit Profile
-
             </a>
-
             <a class="dropdown-item"
-               asp-area="Customer"
-               asp-controller="Auth"
-               asp-action="Logout">
-
+               asp-area="Customer" asp-controller="Auth" asp-action="Logout">
                 <i class="fa-solid fa-right-from-bracket"></i>
                 Logout
-
             </a>
-
         </div>
-
     </div>
-}
+    }
 else
 {
     <div class="auth-links">
-
-        <a class="nav-icon"
-           asp-area="Customer"
-           asp-controller="Auth"
-           asp-action="Login">
-
+        <a class="nav-icon" asp-area="Customer" asp-controller="Auth" asp-action="Login">
             Login
-
         </a>
-
         <a class="nav-icon"
-           asp-area="Customer"
-           asp-controller="Auth"
-           asp-action="Register">
-
+           asp-area="Customer"  asp-controller="Auth" asp-action="Register">
             Register
-
         </a>
-
     </div>
 }
 

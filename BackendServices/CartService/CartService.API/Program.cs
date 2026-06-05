@@ -28,13 +28,13 @@ builder.Services.AddScoped<ICartService, CartServices>();
 builder.Services.AddScoped<IWishlistService, WishlistService>();
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 builder.Services.AddHttpContextAccessor();
+var bookServiceUrl = builder.Configuration["ServiceUrls:BookService"];
 builder.Services.AddHttpClient("BookService", c =>
 {
-    c.BaseAddress = new Uri("https://localhost:7221/"); // BookService URL
+    c.BaseAddress = new Uri(bookServiceUrl!);
 }).AddTransientHttpErrorPolicy(policy =>
-    policy.WaitAndRetryAsync(3, retry =>
-        TimeSpan.FromSeconds(2)));
-
+policy.WaitAndRetryAsync(3, retry =>
+TimeSpan.FromSeconds(2)));
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
@@ -77,10 +77,8 @@ builder.Services.AddAuthentication("Bearer")
             ValidateAudience = true,
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
-
             ValidIssuer = jwtSettings["Issuer"],
             ValidAudience = jwtSettings["Audience"],
-
             IssuerSigningKey = new SymmetricSecurityKey(
                 Encoding.UTF8.GetBytes(jwtSettings["Key"]))
         };

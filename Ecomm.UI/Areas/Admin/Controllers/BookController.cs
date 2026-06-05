@@ -4,6 +4,7 @@ using Ecomm.UI.Models.CategoryDto;
 using Ecomm.UI.Models.CoverTypeDto;
 using Ecomm.UI.Models.ViewModels;
 using Ecomm.UI.ServicesConnection;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
@@ -29,8 +30,7 @@ namespace Ecomm.UI.Areas.Admin.Controllers
                 IsDescending = isDescending,
                 IsDeletedPage = true
             };
-            var pagedBooks =
-            await _apiService.PostAsync<PagedResult<TrashBookDto>>($"{SD.BookAPIPath}/trash",filter);
+            var pagedBooks =await _apiService.PostAsync<PagedResult<TrashBookDto>>($"{SD.BookAPIPath}/trash",filter);
             var dashboard = await _apiService.GetAsync<TrashDashboardDto>($"{SD.BookAPIPath}/trash-dashboard");
             var vm = new TrashBookViewModel
             {
@@ -53,7 +53,6 @@ namespace Ecomm.UI.Areas.Admin.Controllers
             {
                 TempData["SuccessMessage"] = "Book deleted successfully";
             }
-
             return RedirectToAction(nameof(PermanentDelete));
         }
         [HttpPost]
@@ -64,12 +63,14 @@ namespace Ecomm.UI.Areas.Admin.Controllers
             TempData["SuccessMessage"] ="Book restored successfully";
             return RedirectToAction(nameof(PermanentDelete));
         }
+        [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> GetAllBooks()
         {
             var getBooks = await _apiService.GetAsync<IEnumerable<BookListDto>>(SD.BookAPIPath);
             return Json(new { data = getBooks });
         }
+        [Authorize(Roles = SD.Role_Admin)]
         [HttpDelete]
         public async Task<IActionResult> DeleteBook(int id)
         {
@@ -107,6 +108,7 @@ namespace Ecomm.UI.Areas.Admin.Controllers
             };
             return View(vm);
         }
+        [Authorize(Roles = SD.Role_Admin)]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UpsertBook(BookViewModel vm)
@@ -148,9 +150,7 @@ namespace Ecomm.UI.Areas.Admin.Controllers
                     ImageFile = vm.Books.ImageFile,
                     ImageUrl = vm.Books.ImageUrl
                 };
-                await _apiService.PutMultipartAsync(
-                    SD.BookAPIPath,
-                    updatedto);
+                await _apiService.PutMultipartAsync(SD.BookAPIPath,updatedto);
             }
             return RedirectToAction("Manage", "Admin");
         }

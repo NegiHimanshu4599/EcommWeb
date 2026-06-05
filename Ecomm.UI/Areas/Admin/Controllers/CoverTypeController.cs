@@ -4,6 +4,7 @@ using Ecomm.UI.Models.CategoryDto;
 using Ecomm.UI.Models.CoverTypeDto;
 using Ecomm.UI.Models.ViewModels;
 using Ecomm.UI.ServicesConnection;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Ecomm.UI.Areas.Admin.Controllers
@@ -16,6 +17,7 @@ namespace Ecomm.UI.Areas.Admin.Controllers
         {
             _apiService = apiService;
         }
+        [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> GetAllCoverType()
         {
@@ -30,6 +32,7 @@ namespace Ecomm.UI.Areas.Admin.Controllers
             if (coverType == null) return NotFound();
             return View(coverType);
         }
+        [Authorize(Roles = SD.Role_Admin)]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UpsertCoverType(CoverTypeDto coverType)
@@ -48,6 +51,7 @@ namespace Ecomm.UI.Areas.Admin.Controllers
             }
             return RedirectToAction("Manage","Admin");
         }
+        [Authorize(Roles = SD.Role_Admin)]
         [HttpDelete]
         public async Task<IActionResult> DeleteCoverType(int id)
         {
@@ -61,6 +65,7 @@ namespace Ecomm.UI.Areas.Admin.Controllers
                 return Json(new { success = false, message = "Something went Wrong data !!",ex.Message });
             }
         }
+        [Authorize(Roles = SD.Role_Admin)]
         [HttpGet]
         public async Task<IActionResult> PermanentDelete(string? search, int pageNumber = 1)
         {
@@ -81,6 +86,7 @@ namespace Ecomm.UI.Areas.Admin.Controllers
             };
             return View(vm);
         }
+        [Authorize(Roles = SD.Role_Admin)]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> PermanentDelete(int id)
@@ -96,6 +102,7 @@ namespace Ecomm.UI.Areas.Admin.Controllers
             }
             return RedirectToAction(nameof(PermanentDelete));
         }
+        [Authorize(Roles = SD.Role_Admin)]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Restore(int id)

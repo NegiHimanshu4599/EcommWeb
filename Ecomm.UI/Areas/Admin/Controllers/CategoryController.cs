@@ -3,6 +3,7 @@ using Ecomm.UI.Models.BookDtos;
 using Ecomm.UI.Models.CategoryDto;
 using Ecomm.UI.Models.ViewModels;
 using Ecomm.UI.ServicesConnection;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
@@ -12,10 +13,13 @@ namespace Ecomm.UI.Areas.Admin.Controllers
     public class CategoryController : Controller
     {
         private readonly IAPIService _apiService;
-        public CategoryController(IAPIService apiService)
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        public CategoryController(IAPIService apiService, IHttpContextAccessor httpContextAccessor)
         {
             _apiService = apiService;
+            _httpContextAccessor = httpContextAccessor;
         }
+        [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> GetAllCategory()
         {
@@ -36,6 +40,7 @@ namespace Ecomm.UI.Areas.Admin.Controllers
             }
             return View(vm);
         }
+        [Authorize(Roles = SD.Role_Admin)]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UpsertCategory(CategoryViewModel vm)
@@ -55,6 +60,7 @@ namespace Ecomm.UI.Areas.Admin.Controllers
             }
             return RedirectToAction("Manage", "Admin");
         }
+        [Authorize(Roles = SD.Role_Admin)]
         [HttpDelete]
         public async Task<IActionResult> DeleteCategory(int id)
         {
@@ -65,10 +71,7 @@ namespace Ecomm.UI.Areas.Admin.Controllers
             }
             catch (Exception ex)
             {
-                return Json(new
-                {
-                    success = false,
-                    message = ex.Message.Contains("subcategories")? "Cannot delete category with subcategories": ex.Message});
+                return Json(new{ success = false, message = ex.Message.Contains("subcategories")? "Cannot delete category with subcategories": ex.Message});
             }
         }
         private async Task LoadParentCategories(CategoryViewModel vm)
@@ -82,6 +85,7 @@ namespace Ecomm.UI.Areas.Admin.Controllers
                     Value = x.Id.ToString()
                 });
         }
+        [Authorize(Roles = SD.Role_Admin)]
         [HttpGet]
         public async Task<IActionResult>PermanentDelete(string? search,int pageNumber = 1)
         {
@@ -102,6 +106,7 @@ namespace Ecomm.UI.Areas.Admin.Controllers
             };            
             return View(vm);
         }
+        [Authorize(Roles = SD.Role_Admin)]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> PermanentDelete(int id)
@@ -117,6 +122,7 @@ namespace Ecomm.UI.Areas.Admin.Controllers
             }
             return RedirectToAction(nameof(PermanentDelete));
         }
+        [Authorize(Roles = SD.Role_Admin)]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Restore(int id)
@@ -125,5 +131,6 @@ namespace Ecomm.UI.Areas.Admin.Controllers
             TempData["SuccessMessage"] ="Category restored successfully";
             return RedirectToAction(nameof(PermanentDelete));
         }
+        //private async Task GetUserId(HttpClient )
     }
 }

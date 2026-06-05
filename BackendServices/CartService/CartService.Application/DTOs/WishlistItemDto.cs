@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace CartService.Application.DTOs
 {
-    public class BookDto
+    public class WishlistItemDto
     {
-        public int Id { get; set; }
+        public int BookId { get; set; }
         public string Title { get; set; }
         public decimal Price { get; set; }
         public string ImageUrl { get; set; }

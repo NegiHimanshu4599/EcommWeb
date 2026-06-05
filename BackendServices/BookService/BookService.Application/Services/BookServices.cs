@@ -77,7 +77,7 @@ namespace BookService.Application.Services
                 }
                 _logger.LogError(ex, "Error while adding book");
                 throw;
-            }
+            } 
         }
         public async Task UpdateAsync(UpdateBookDto dto)
         {
@@ -274,7 +274,9 @@ namespace BookService.Application.Services
             {
                 return Enumerable.Empty<BookListDto>();
             }
-            var books = await _unitofwork.Book.Query().AsNoTracking().Where(x => ids.Contains(x.Id) && !x.IsDeleted).Include(x => x.Category).Include(x => x.CoverType).ToListAsync();
+            var idList = ids.ToList();
+            var booksQuery = await _unitofwork.Book.Query().AsNoTracking().Include(x => x.Category).Include(x => x.CoverType).ToListAsync();
+            var books = booksQuery.Where(x => idList.Contains(x.Id) && !x.IsDeleted).ToList();
             return _mapper.Map<IEnumerable<BookListDto>>(books);
         }
         public async Task RestoreAsync(int id)

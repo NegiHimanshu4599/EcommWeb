@@ -30,21 +30,39 @@ namespace Ecomm.UI.Areas.Customer.Controllers
         [HttpPost]
         public async Task<IActionResult> Login(LoginDto model)
         {
-            var result = await _apiService.PostAsync<LoginResponseDto>(SD.AuthAPIPath + "/login", model);
-            if (result != null && !string.IsNullOrEmpty(result.AccessToken))
+            // FIRST validate model
+            if (!ModelState.IsValid)
             {
+                return View(model);
+            }
+            try
+            {
+                var result = await _apiService.PostAsync<LoginResponseDto>(SD.AuthAPIPath + "/login",model);
+                if (result == null || string.IsNullOrEmpty(result.AccessToken))
+                {
+                    ModelState.AddModelError("", "Invalid email or password");
+                    return View(model);
+                }
                 HttpContext.Session.SetString("JWT", result.AccessToken);
-                HttpContext.Session.SetString("RefreshToken", result.RefreshToken);
+                HttpContext.Session.SetString("RefreshToken",result.RefreshToken);
                 var handler = new JwtSecurityTokenHandler();
                 var jwt = handler.ReadJwtToken(result.AccessToken);
                 var claims = jwt.Claims.Select(c => new Claim(c.Type, c.Value)).ToList();
-                var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                var identity = new ClaimsIdentity( claims, CookieAuthenticationDefaults.AuthenticationScheme);
                 var principal = new ClaimsPrincipal(identity);
-                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
+                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,principal);
+                if (!result.IsProfileComplete)
+                {
+                    return RedirectToAction("CompleteProfile","Auth");
+                }
                 return RedirectToAction("Index", "Home");
             }
-            ModelState.AddModelError("", "Invalid login");
-            return View(model);
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", ex.Message);
+
+                return View(model);
+            }
         }
         [HttpGet]
         public IActionResult Register()
@@ -137,6 +155,11 @@ namespace Ecomm.UI.Areas.Customer.Controllers
                 return RedirectToAction("CompleteProfile");
             }
             return RedirectToAction("Index", "Home");
+        }
+        [HttpGet]
+        public IActionResult AccessDenied()
+        {
+            return View();
         }
     }
 }

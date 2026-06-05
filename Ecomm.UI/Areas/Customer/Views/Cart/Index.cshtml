@@ -1,0 +1,163 @@
+﻿@using Ecomm.UI.Common
+@model Ecomm.UI.Models.CartDto.CartDto
+@{
+    Layout = "_CartLayout";
+}
+<section class="cart-page">
+
+    <div class="breadcrumb-area">
+        <a asp-area="Customer" asp-controller="Home"  asp-action="Index">
+            Home
+        </a>
+        <span>/</span>
+        <span>Cart</span>
+    </div>
+    <div class="cart-header">
+        <h2>
+            <i class="fas fa-shopping-cart"></i>
+            Shopping Cart
+        </h2>
+        <a asp-area="Customer" asp-controller="Home" asp-action="Index" class="continue-btn">
+            Continue Shopping
+        </a>
+    </div>
+    @if (TempData["success"] != null)
+    {
+        <div class="success-alert">
+            @TempData["success"]
+        </div>
+    }
+    @if (TempData["error"] != null)
+    {
+        <div class="error-alert">
+            @TempData["error"]
+        </div>
+    }
+    @if (!Model.Items.Any())
+    {
+        <div class="empty-cart">
+            <i class="fas fa-shopping-cart"></i>
+            <h3>Your cart is empty</h3>
+            <p>Add some books to start shopping.</p>
+            <a asp-area="Customer"  asp-controller="Home"  asp-action="Index" class="shop-btn">
+                Browse Books
+            </a>
+        </div>
+    }
+    else
+    {
+        <div class="cart-container">
+            <!-- LEFT -->
+            <div class="cart-left">
+                <div class="cart-table-header">
+                    <span>Product</span>
+                    <span>Price</span>
+                    <span>Quantity</span>
+                    <span>Total</span>
+                    <span>Action</span>
+                </div>
+                @foreach (var item in Model.Items)
+                {
+                    <div class="cart-item">
+                        <div class="product-section">
+                            <img src="@($"{SD.BookBaseUrl}{item.ImageUrl}")" class="cart-image" />
+                            <div class="cart-info">
+                                <h4>@item.ProductName</h4>
+                                <p>In Stock</p>
+                            </div>
+                        </div>
+                        <div class="price-cell">
+                            ₹@item.Price
+                        </div>
+                        <div class="cart-qty">
+                            <a asp-action="Minus" asp-route-bookId="@item.BookId" class="qty-btn">
+                                -
+                            </a>
+                            <span>@item.Quantity</span>
+                            <a asp-action="Plus" asp-route-bookId="@item.BookId"  class="qty-btn">
+                                +
+                            </a>
+                        </div>
+                        <div class="cart-total">
+                            ₹@(item.Price* item.Quantity)
+                        </div>
+                        <a asp-action="Delete" asp-route-bookId="@item.BookId" class="delete-btn">
+                            <i class="fas fa-trash"></i>
+                        </a>
+                    </div>
+                }
+                <div class="cart-footer">
+                    <a asp-action="Clear" class="clear-btn">
+                        <i class="fas fa-trash"></i>
+                        Clear Cart
+                    </a>
+                    <div class="footer-total">
+                        <span>
+                            @Model.Items.Sum(x => x.Quantity)
+                            Items
+                        </span>
+                        <strong>
+                            ₹@Model.TotalPrice
+                        </strong>
+                    </div>
+                </div>
+            </div>
+            <!-- RIGHT -->
+            <div class="cart-right">
+                <div class="cart-summary">
+                    <h3>Order Summary</h3>
+                    <div class="summary-row">
+                        <span>Subtotal</span>
+                        <span>
+                            ₹@Model.TotalPrice
+                        </span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Shipping</span>
+                        <span class="free">
+                            FREE
+                        </span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Discount</span>
+                        <span class="free">
+                            ₹0
+                        </span>
+                    </div>
+                    <hr />
+                    <div class="grand-total">
+                        <span>Grand Total</span>
+                        <span>
+                            ₹@Model.TotalPrice
+                        </span>
+                    </div>
+                    <a asp-action="Checkout" class="checkout-btn">
+                        Proceed To Checkout
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="cart-benefits">
+            <div class="benefit">
+                <i class="fas fa-truck"></i>
+                <h5>Free Shipping</h5>
+                <p>Orders above ₹499</p>
+            </div>
+            <div class="benefit">
+                <i class="fas fa-undo"></i>
+                <h5>Easy Returns</h5>
+                <p>30 Day Return Policy</p>
+            </div>
+            <div class="benefit">
+                <i class="fas fa-shield-alt"></i>
+                <h5>Secure Payment</h5>
+                <p>100% Secure Checkout</p>
+            </div>
+            <div class="benefit">
+                <i class="fas fa-headset"></i>
+                <h5>24/7 Support</h5>
+                <p>Always Here To Help</p>
+            </div>
+        </div>
+    } 
+</section>

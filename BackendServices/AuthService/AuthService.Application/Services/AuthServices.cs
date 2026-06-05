@@ -57,7 +57,7 @@ namespace AuthService.Application.Services
                 throw new KeyNotFoundException("User Not Found");
             }
             return new UserProfileDto
-            {
+            { 
                 Email = user.Email,
                 Name = user.Name,
                 StreetAddress = user.StreetAddress,
@@ -105,6 +105,12 @@ namespace AuthService.Application.Services
             await _refreshTokenRepository.AddAsync(refresh);
             await _refreshTokenRepository.SaveAsync();
             _logger.LogInformation($"Login took {(DateTime.UtcNow - start).TotalMilliseconds} ms");
+            bool isProfileComplete =
+   !string.IsNullOrWhiteSpace(user.PhoneNumber) &&
+   !string.IsNullOrWhiteSpace(user.StreetAddress) &&
+   !string.IsNullOrWhiteSpace(user.City) &&
+   !string.IsNullOrWhiteSpace(user.State) &&
+   !string.IsNullOrWhiteSpace(user.PostalCode);
             return new LoginResponseDto
             {
                 Email = user.Email,
@@ -114,6 +120,7 @@ namespace AuthService.Application.Services
                 RefreshToken = refreshToken,
                 AccessTokenExpiry = DateTime.UtcNow.AddMinutes(
                     double.Parse(_config["Jwt:DurationInMinutes"])),
+                IsProfileComplete = isProfileComplete
             };
         }
         public async Task<LoginResponseDto> RefreshTokenAsync(RefreshRequestDto Dto)
@@ -156,7 +163,7 @@ namespace AuthService.Application.Services
                 AccessToken = newAccess,
                 RefreshToken = newRefresh,
                 AccessTokenExpiry = DateTime.UtcNow.AddMinutes(
-                    double.Parse(_config["Jwt:DurationInMinutes"]))
+                    double.Parse(_config["Jwt:DurationInMinutes"])),
             };
         }
         public async Task<RegisterResponseDto> RegisterAsync(RegisterUserDto Dto)
@@ -174,7 +181,7 @@ namespace AuthService.Application.Services
             }
             var user = new ApplicationUser
             {
-                UserName = Dto.UserName,
+                UserName = Dto.Email,
                 Email = Dto.Email,
                 Name = Dto.UserName,
             };
