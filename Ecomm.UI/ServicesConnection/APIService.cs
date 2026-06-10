@@ -23,7 +23,11 @@ namespace Ecomm.UI.ServicesConnection
             await RefreshTokenIfNeeded();
             var client = _clientFactory.CreateClient();
             if (string.IsNullOrEmpty(token))
-                token = _httpContextAccessor.HttpContext?.Session.GetString("JWT");
+                //token = _httpContextAccessor.HttpContext?.Session.GetString("JWT");
+                token = _httpContextAccessor
+    .HttpContext?
+    .Request
+    .Cookies["JWT"];
             if (!string.IsNullOrEmpty(token))
             {
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
@@ -158,27 +162,71 @@ namespace Ecomm.UI.ServicesConnection
         }
         private async Task RefreshTokenIfNeeded()
         {
-            var token = _httpContextAccessor.HttpContext?.Session.GetString("JWT");
+            var token = _httpContextAccessor.HttpContext?.Request.Cookies["JWT"];
             if (string.IsNullOrEmpty(token))
                 return;
             var handler = new JwtSecurityTokenHandler();
             var jwt = handler.ReadJwtToken(token);
             if (jwt.ValidTo > DateTime.UtcNow.AddMinutes(1))
                 return;
-            var refreshToken = _httpContextAccessor.HttpContext?.Session.GetString( "RefreshToken");
+            var refreshToken = _httpContextAccessor.HttpContext?.Request.Cookies["RefreshToken"];
             if (string.IsNullOrEmpty(refreshToken))
                 return;
             var client = _clientFactory.CreateClient();
-            var body = JsonSerializer.Serialize(new { RefreshToken = refreshToken });
-            var content = new StringContent(body, Encoding.UTF8, "application/json");
-            var response = await client.PostAsync(SD.AuthAPIPath + "/refresh", content);
+            var body = JsonSerializer.Serialize(new
+            {
+                RefreshToken = refreshToken
+            });
+            var content = new StringContent( body,Encoding.UTF8, "application/json");
+            var response = await client.PostAsync(
+                SD.AuthAPIPath + "/refresh",content);
             if (!response.IsSuccessStatusCode)
                 return;
             var json = await response.Content.ReadAsStringAsync();
-            var result = JsonSerializer.Deserialize<LoginResponseDto>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-            _httpContextAccessor.HttpContext.Session.SetString("JWT", result.AccessToken);
-            _httpContextAccessor.HttpContext.Session.SetString("RefreshToken", result.RefreshToken);
+            var result = JsonSerializer.Deserialize<LoginResponseDto>(json,new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            });
+            if (result == null)
+                return;
+            _httpContextAccessor.HttpContext?.Response.Cookies.Append("JWT",result.AccessToken,new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = _httpContextAccessor.HttpContext.Request.IsHttps,
+                SameSite = SameSiteMode.Lax,
+                Expires = DateTime.UtcNow.AddDays(7)
+            });
+            _httpContextAccessor.HttpContext?.Response.Cookies.Append("RefreshToken",result.RefreshToken,new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = _httpContextAccessor.HttpContext.Request.IsHttps,
+                SameSite = SameSiteMode.Lax,
+                Expires = DateTime.UtcNow.AddDays(7)
+            });
         }
+        //private async Task RefreshTokenIfNeeded()
+        //{
+        //    var token = _httpContextAccessor.HttpContext?.Session.GetString("JWT");
+        //    if (string.IsNullOrEmpty(token))
+        //        return;
+        //    var handler = new JwtSecurityTokenHandler();
+        //    var jwt = handler.ReadJwtToken(token);
+        //    if (jwt.ValidTo > DateTime.UtcNow.AddMinutes(1))
+        //        return;
+        //    var refreshToken = _httpContextAccessor.HttpContext?.Session.GetString( "RefreshToken");
+        //    if (string.IsNullOrEmpty(refreshToken))
+        //        return;
+        //    var client = _clientFactory.CreateClient();
+        //    var body = JsonSerializer.Serialize(new { RefreshToken = refreshToken });
+        //    var content = new StringContent(body, Encoding.UTF8, "application/json");
+        //    var response = await client.PostAsync(SD.AuthAPIPath + "/refresh", content);
+        //    if (!response.IsSuccessStatusCode)
+        //        return;
+        //    var json = await response.Content.ReadAsStringAsync();
+        //    var result = JsonSerializer.Deserialize<LoginResponseDto>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+        //    _httpContextAccessor.HttpContext.Session.SetString("JWT", result.AccessToken);
+        //    _httpContextAccessor.HttpContext.Session.SetString("RefreshToken", result.RefreshToken);
+        //}
         public async Task PatchAsync(string url,object? data = null, string? token = null)
         {
             var client = await CreateClient(token);

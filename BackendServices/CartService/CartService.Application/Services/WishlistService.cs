@@ -3,10 +3,7 @@ using CartService.Application.Exceptions;
 using CartService.Application.Interfaces;
 using CartService.Domain.Entities;
 using CartService.Domain.Interfaces;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using Microsoft.Extensions.Logging; 
 using System.Net;
 using System.Net.Http.Json;
 

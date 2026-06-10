@@ -1,7 +1,11 @@
 ﻿@using Ecomm.UI.Common
 @model Ecomm.UI.Models.BookDtos.BookDetailDto
 @{
-    Layout = "_DetailLayout";
+    Layout = "_CustomerLayout";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/siteDetail.css" asp-append-version="true" />
 }
 <section class="book-details-page">
     <div class="details-wrapper">

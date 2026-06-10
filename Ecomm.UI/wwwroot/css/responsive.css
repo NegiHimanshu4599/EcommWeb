@@ -1,0 +1,408 @@
+﻿/* responsive.css */
+
+/* =========================
+   GLOBAL RESPONSIVE FIXES
+========================= */
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html {
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+}
+
+body {
+    overflow-x: hidden;
+    width: 100%;
+    min-width: 320px;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+table {
+    width: 100%;
+}
+
+.container,
+.container-fluid,
+.row {
+    max-width: 100%;
+}
+
+/* =========================
+   CUSTOMER NAVBAR
+========================= */
+
+.custom-navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.nav-left,
+.nav-right {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.nav-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin: 0;
+    padding: 0;
+}
+
+.search-box {
+    width: 100%;
+    max-width: 350px;
+}
+
+    .search-box input {
+        width: 100%;
+    }
+
+/* =========================
+   BOOK CARDS
+========================= */
+
+.book-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill,minmax(260px,1fr));
+    gap: 24px;
+}
+
+.book-card {
+    width: 100%;
+    height: 100%;
+}
+
+    .book-card img {
+        width: 100%;
+        object-fit: cover;
+    }
+
+/* =========================
+   HERO SECTION
+========================= */
+
+.hero-section {
+    min-height: auto;
+}
+
+.hero-content {
+    width: 100%;
+    max-width: 900px;
+}
+
+/* =========================
+   ADMIN LAYOUT
+========================= */
+
+.admin-wrapper {
+    display: flex;
+    min-height: 100vh;
+}
+
+.sidebar {
+    flex-shrink: 0;
+}
+
+.main-content,
+.content-area {
+    width: 100%;
+    min-width: 0;
+}
+
+/* =========================
+   TABLES
+========================= */
+
+.table-responsive-custom {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+    .table-responsive-custom table {
+        min-width: 700px;
+    }
+
+/* =========================
+   FORMS
+========================= */
+
+.form-control,
+.form-select {
+    width: 100%;
+}
+
+.input-group-custom {
+    width: 100%;
+}
+
+.custom-input {
+    width: 100%;
+}
+
+/* =========================
+   BUTTONS
+========================= */
+
+.btn-admin,
+.btn-outline-admin {
+    white-space: nowrap;
+}
+
+/* =========================
+   PREVIEW CARD
+========================= */
+
+.preview-card {
+    height: 100%;
+}
+
+.preview-image {
+    width: 100%;
+    max-width: 100%;
+}
+
+/* =========================
+   PROFILE LAYOUT
+========================= */
+
+.profile-wrapper {
+    width: 100%;
+}
+
+.profile-card {
+    width: 100%;
+}
+
+.profile-main {
+    min-width: 0;
+}
+
+/* =========================
+   STATS
+========================= */
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill,minmax(250px,1fr));
+    gap: 20px;
+}
+
+/* =========================
+   MODALS
+========================= */
+
+.modal-dialog {
+    max-width: 95%;
+}
+
+/* =========================
+   LARGE TABLET
+========================= */
+
+@media (max-width: 1024px) {
+
+    .sidebar {
+        width: 240px;
+    }
+
+    .hero-content h1 {
+        font-size: 3rem;
+    }
+
+    .preview-card {
+        margin-top: 20px;
+    }
+}
+
+/* =========================
+   TABLET
+========================= */
+
+@media (max-width: 768px) {
+
+    .custom-navbar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .nav-left,
+    .nav-right {
+        width: 100%;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .nav-links {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .search-box {
+        max-width: 100%;
+    }
+
+    .hero-content {
+        text-align: center;
+        padding: 20px;
+    }
+
+        .hero-content h1 {
+            font-size: 2.4rem;
+        }
+
+    .hero-buttons {
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .section-header {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+    }
+
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .d-flex.gap-3 {
+        flex-direction: column;
+    }
+
+    .btn-admin,
+    .btn-outline-admin {
+        width: 100%;
+        text-align: center;
+    }
+
+    .trash-header,
+    .trash-header-left {
+        flex-direction: column;
+        text-align: center;
+        gap: 15px;
+    }
+
+    .breadcrumb-box {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 576px) {
+
+    body {
+        font-size: 14px;
+    }
+
+    .hero-content h1 {
+        font-size: 2rem;
+        line-height: 1.2;
+    }
+
+    .hero-content p {
+        font-size: 14px;
+    }
+
+    .welcome-text {
+        font-size: 12px;
+    }
+
+    .book-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .book-card {
+        max-width: 100%;
+    }
+
+    .profile-card,
+    .preview-card,
+    .stats-card {
+        padding: 15px;
+    }
+
+    .logo span {
+        display: none;
+    }
+
+    .nav-icon {
+        font-size: 13px;
+    }
+
+    .section-header h2 {
+        font-size: 1.6rem;
+    }
+
+    .breadcrumb-box {
+        display: none;
+    }
+
+    .table-responsive-custom table {
+        min-width: 600px;
+    }
+}
+
+/* =========================
+   SMALL MOBILE
+========================= */
+
+@media (max-width: 375px) {
+
+    .hero-content h1 {
+        font-size: 1.7rem;
+    }
+
+    .btn-admin,
+    .btn-outline-admin,
+    .shop-btn,
+    .explore-btn {
+        width: 100%;
+    }
+
+    .hero-buttons {
+        flex-direction: column;
+    }
+
+    .nav-right {
+        gap: 10px;
+    }
+}
+
+/* =========================
+   EXTRA SMALL MOBILE
+========================= */
+
+@media (max-width: 320px) {
+
+    body {
+        min-width: 320px;
+    }
+
+    .hero-content h1 {
+        font-size: 1.5rem;
+    }
+
+    .section-header h2 {
+        font-size: 1.3rem;
+    }
+}

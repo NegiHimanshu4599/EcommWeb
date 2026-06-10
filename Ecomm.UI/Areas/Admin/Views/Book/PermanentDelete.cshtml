@@ -2,7 +2,10 @@
 @model Ecomm.UI.Models.ViewModels.TrashBookViewModel
 @{
     ViewData["Title"] = "Deleted Books";
-    Layout = "~/Views/Shared/_TrashLayout.cshtml";
+    Layout = "_AdminLayout";
+}
+@section Styles {
+    <link rel="stylesheet" href="~/css/Trash.css" asp-append-version="true" />
 }
 <div class="trash-page">
     <!-- PAGE HEADER -->

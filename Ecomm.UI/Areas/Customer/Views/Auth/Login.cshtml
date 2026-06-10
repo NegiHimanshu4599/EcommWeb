@@ -5,7 +5,6 @@
 }
 <section class="login-container">
     <div class="login-card">
-
         <!-- LEFT SIDE -->
         <div class="login-left">
             <img src="~/images/login-bg.jpg" class="login-image" />
@@ -17,28 +16,21 @@
         <!-- RIGHT SIDE -->
         <div class="login-right">
             <div class="form-wrapper">
-
                 <h2 class="title">LOGIN PAGE</h2>
                 <p class="subtitle">Sign into your account</p>
-
                 <form method="post">
                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-
                     <div class="input-group mb-3">
                         <input asp-for="Email" class="form-control custom-input" placeholder="Email" />
                     </div>
-
                     <div class="input-group mb-3">
                         <input asp-for="Password" type="password" class="form-control custom-input" placeholder="Password" />
                     </div>
                     <button type="submit" class="btn login-btn">Login</button>
-
                     <div class="divider">or</div>
-
                     <div class="text-center">
                         <a href="#" class="link">Forgot password?</a>
                     </div>
-
                     <div class="text-center mt-2">
                         Don't have an account?
                         <a asp-action="Register" class="link">Register</a>
@@ -52,7 +44,6 @@
                         Sign in with Google
                     </button>
                 </form>
-
             </div>
         </div>
     </div>

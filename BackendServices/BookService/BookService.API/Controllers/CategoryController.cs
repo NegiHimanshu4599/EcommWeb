@@ -1,8 +1,6 @@
 ﻿using BookService.Application.DTOs;
 using BookService.Application.Interfaces;
-using BookService.Application.Services;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BookService.API.Controllers

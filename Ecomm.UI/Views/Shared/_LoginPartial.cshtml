@@ -1,48 +1,33 @@
 ﻿@using System.IdentityModel.Tokens.Jwt
 @inject IHttpContextAccessor HttpContextAccessor
-
 @{
-    var token = HttpContextAccessor.HttpContext.Session.GetString("JWT");
-
+    var token = HttpContextAccessor.HttpContext.Request.Cookies["JWT"];
+    // var token = HttpContextAccessor.HttpContext.Session["JWT"];
     string email = "";
     string role = "";
-
     if (!string.IsNullOrEmpty(token))
     {
         var handler = new JwtSecurityTokenHandler();
         var jwt = handler.ReadJwtToken(token);
-
-        email = jwt.Claims
-            .FirstOrDefault(x => x.Type.Contains("email"))?.Value;
-
-        role = jwt.Claims
-            .FirstOrDefault(x => x.Type.Contains("role"))?.Value;
+        email = jwt.Claims.FirstOrDefault(x => x.Type.Contains("email"))?.Value;
+        role = jwt.Claims.FirstOrDefault(x => x.Type.Contains("role"))?.Value;
     }
-
     ViewBag.UserRole = role;
 }
-
 @if (!string.IsNullOrEmpty(token))
 {
     <div class="dropdown">
-
-        <a class="nav-icon dropdown-toggle"
-           data-bs-toggle="dropdown"
+        <a class="nav-icon dropdown-toggle" data-bs-toggle="dropdown"
            href="#">
-
             <i class="fa-solid fa-user"></i>
             Hello @email
-
         </a>
-
         <div class="dropdown-menu dropdown-menu-end">
-
             <a class="dropdown-item" asp-area="Customer" asp-controller="Auth" asp-action="CompleteProfile">
                 <i class="fa-solid fa-id-card"></i>
                 Edit Profile
             </a>
-            <a class="dropdown-item"
-               asp-area="Customer" asp-controller="Auth" asp-action="Logout">
+            <a class="dropdown-item" asp-area="Customer" asp-controller="Auth" asp-action="Logout">
                 <i class="fa-solid fa-right-from-bracket"></i>
                 Logout
             </a>
@@ -55,110 +40,8 @@ else
         <a class="nav-icon" asp-area="Customer" asp-controller="Auth" asp-action="Login">
             Login
         </a>
-        <a class="nav-icon"
-           asp-area="Customer"  asp-controller="Auth" asp-action="Register">
+        <a class="nav-icon" asp-area="Customer"  asp-controller="Auth" asp-action="Register">
             Register
         </a>
     </div>
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-@* @using System.IdentityModel.Tokens.Jwt
-@inject IHttpContextAccessor HttpContextAccessor
-@{
-    var token = HttpContextAccessor.HttpContext.Session.GetString("JWT");
-
-    string email = "";
-    string role = "";
-
-    if (!string.IsNullOrEmpty(token))
-    {
-        var handler = new JwtSecurityTokenHandler();
-        var jwt = handler.ReadJwtToken(token);
-        email = jwt.Claims.FirstOrDefault(x => x.Type.Contains("email"))?.Value;
-        role = jwt.Claims.FirstOrDefault(x => x.Type.Contains("role"))?.Value;
-    }
-
-    ViewBag.UserRole = role;
-}
-<ul class="navbar-nav ms-auto">
-    @if (!string.IsNullOrEmpty(token))
-    {
-        <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle text-light"
-               data-bs-toggle="dropdown"
-               href="#">
-                <i class="fa-solid fa-user"></i>
-                Hello @email
-            </a>
-            <div class="dropdown-menu dropdown-menu-end">
-                <a class="dropdown-item"
-                   asp-area="Customer"
-                   asp-controller="Auth"
-                   asp-action="CompleteProfile">
-                    <i class="fa-solid fa-id-card">
-                    </i>
-                    Edit Profile
-                </a>
-                <a class="dropdown-item"
-                   asp-area="Customer"
-                   asp-controller="Auth"
-                   asp-action="Logout">
-                    <i class="fa-solid fa-right-from-bracket"></i>
-                    Logout
-                </a>
-            </div>
-        </li>
-    }
-    else
-    {
-        <li class="nav-item">
-            <a class="nav-link text-light"
-               asp-area="Customer"
-               asp-controller="Auth"
-               asp-action="Login">
-                Login
-            </a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link text-light"
-               asp-area="Customer"
-               asp-controller="Auth"
-               asp-action="Register">
-                Register
-            </a>
-        </li>
-    }
-</ul> *@
