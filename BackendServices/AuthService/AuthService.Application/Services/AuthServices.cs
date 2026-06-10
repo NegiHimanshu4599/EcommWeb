@@ -6,8 +6,10 @@ using AuthService.Domain.Entities;
 using AuthService.Domain.Interface;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using System.Data;
 
 namespace AuthService.Application.Services
 {
@@ -57,7 +59,7 @@ namespace AuthService.Application.Services
                 throw new KeyNotFoundException("User Not Found");
             }
             return new UserProfileDto
-            { 
+            {
                 Email = user.Email,
                 Name = user.Name,
                 StreetAddress = user.StreetAddress,
@@ -92,36 +94,8 @@ namespace AuthService.Application.Services
                 throw new KeyNotFoundException("User has no Role Assigned");
             }
             var role = roles.FirstOrDefault() ?? "";
-            var accessToken = _jwt.GenerateToken(user, role);
-            await _refreshTokenRepository.RevokeAllUserTokens(user.Id);
-            var refreshToken = _jwt.GenerateRefreshToken();
-            var refresh = new RefreshToken
-            {
-                Token = _jwt.HashToken(refreshToken),
-                UserId = user.Id,
-                ExpiryDate = DateTime.UtcNow.AddDays(7),
-                IsRevoked = false
-            };
-            await _refreshTokenRepository.AddAsync(refresh);
-            await _refreshTokenRepository.SaveAsync();
             _logger.LogInformation($"Login took {(DateTime.UtcNow - start).TotalMilliseconds} ms");
-            bool isProfileComplete =
-   !string.IsNullOrWhiteSpace(user.PhoneNumber) &&
-   !string.IsNullOrWhiteSpace(user.StreetAddress) &&
-   !string.IsNullOrWhiteSpace(user.City) &&
-   !string.IsNullOrWhiteSpace(user.State) &&
-   !string.IsNullOrWhiteSpace(user.PostalCode);
-            return new LoginResponseDto
-            {
-                Email = user.Email,
-                Name = user.Name,
-                Role = role,
-                AccessToken = accessToken,
-                RefreshToken = refreshToken,
-                AccessTokenExpiry = DateTime.UtcNow.AddMinutes(
-                    double.Parse(_config["Jwt:DurationInMinutes"])),
-                IsProfileComplete = isProfileComplete
-            };
+            return await GenerateTokensAsync(user, role);
         }
         public async Task<LoginResponseDto> RefreshTokenAsync(RefreshRequestDto Dto)
         {
@@ -162,11 +136,10 @@ namespace AuthService.Application.Services
                 Role = role,
                 AccessToken = newAccess,
                 RefreshToken = newRefresh,
-                AccessTokenExpiry = DateTime.UtcNow.AddMinutes(
-                    double.Parse(_config["Jwt:DurationInMinutes"])),
+                AccessTokenExpiry = DateTime.UtcNow.AddMinutes(double.Parse(_config["Jwt:DurationInMinutes"])),
             };
         }
-        public async Task<RegisterResponseDto> RegisterAsync(RegisterUserDto Dto)
+        public async Task<LoginResponseDto> RegisterAsync(RegisterUserDto Dto)
         {
             if (Dto.Password != Dto.ConfirmPassword)
             {
@@ -200,14 +173,15 @@ namespace AuthService.Application.Services
             {
                 assignedRole = SD.Role_Individual;
             }
-            await _userManager.AddToRoleAsync(user, assignedRole);
-            //return _mapper.Map<RegisterResponseDto>(user);
-            return new RegisterResponseDto
+            var roleResult = await _userManager.AddToRoleAsync(user, assignedRole);
+            if (!roleResult.Succeeded)
             {
-                Email = user.Email,
-                Name = user.Name,
-                Role = assignedRole
-            };
+                throw new Exception(
+                    string.Join(",",
+                    roleResult.Errors.Select(x => x.Description)));
+            }
+
+            return await GenerateTokensAsync(user, assignedRole);
         }
         public async Task<UserProfileDto> UpdateProfileAsync(string userId, UpdateUserDto dto)
         {
@@ -245,8 +219,7 @@ namespace AuthService.Application.Services
             var hashed = _jwt.HashToken(dto.RefreshToken);
             var stored = await _refreshTokenRepository.FirstOrDefaultAsync(x => x.Token == hashed);
             if (stored == null) return;
-            var tokens = await _refreshTokenRepository
-                .GetAllAsync(x => x.UserId == stored.UserId);
+            var tokens = await _refreshTokenRepository.GetAllAsync(x => x.UserId == stored.UserId);
             foreach (var t in tokens)
             {
                 t.IsRevoked = true;
@@ -256,7 +229,6 @@ namespace AuthService.Application.Services
         public async Task<LoginResponseDto> GoogleLoginAsync(GoogleLoginDto dto)
         {
             var user = await _userManager.FindByEmailAsync(dto.Email);
-            // Create user if not exists
             if (user == null)
             {
                 user = new ApplicationUser
@@ -269,14 +241,37 @@ namespace AuthService.Application.Services
                 var result = await _userManager.CreateAsync(user);
                 if (!result.Succeeded)
                 {
-                    throw new Exception(
-                        string.Join(",", result.Errors.Select(x => x.Description)));
+                    throw new Exception(string.Join(",", result.Errors.Select(x => x.Description)));
                 }
                 await _userManager.AddToRoleAsync(user, SD.Role_Individual);
             }
             var roles = await _userManager.GetRolesAsync(user);
             var role = roles.FirstOrDefault() ?? SD.Role_Individual;
+            return await GenerateTokensAsync(user, role);
+        }
+        public async Task<List<UserProfileDto>> GetAllProfileAsync()
+        {
+            var users = await _userManager.Users.ToListAsync();
+            if (!users.Any())
+            {
+                _logger.LogInformation("No users found in the system.");
+                return new List<UserProfileDto>();
+            }
+            return users.Select(user => new UserProfileDto
+            {
+                Email = user.Email,
+                Name = user.Name,
+                StreetAddress = user.StreetAddress,
+                City = user.City,
+                State = user.State,
+                PostalCode = user.PostalCode,
+                PhoneNumber = user.PhoneNumber
+            }).ToList();
+        }
+        private async Task<LoginResponseDto> GenerateTokensAsync(ApplicationUser user, string role)
+        {
             var accessToken = _jwt.GenerateToken(user, role);
+            await _refreshTokenRepository.RevokeAllUserTokens(user.Id);
             var refreshToken = _jwt.GenerateRefreshToken();
             var refresh = new RefreshToken
             {

@@ -50,6 +50,8 @@ namespace AuthService.API.Controllers
         public async Task<IActionResult> GetProfile()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userId == null)
+                return NotFound();
             var result = await _authService.GetProfileAsync(userId);
             return Ok(result);
         }
@@ -58,6 +60,8 @@ namespace AuthService.API.Controllers
         public async Task<IActionResult> UpdateProfile(UpdateUserDto dto)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userId == null)
+                return NotFound();
             var result = await _authService.UpdateProfileAsync(userId, dto);
             return Ok(result);
         }
@@ -80,6 +84,12 @@ namespace AuthService.API.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
             var result = await _authService.GoogleLoginAsync(model);
+            return Ok(result);
+        }
+        [HttpGet("AllProfiles")]
+        public async Task<IActionResult> GetAllProfileAsync()
+        {
+            var result = await _authService.GetAllProfileAsync();
             return Ok(result);
         }
     }

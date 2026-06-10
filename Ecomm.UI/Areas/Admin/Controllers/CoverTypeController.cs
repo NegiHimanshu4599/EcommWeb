@@ -1,6 +1,5 @@
 ﻿using Ecomm.UI.Common;
 using Ecomm.UI.Models.BookDtos;
-using Ecomm.UI.Models.CategoryDto;
 using Ecomm.UI.Models.CoverTypeDto;
 using Ecomm.UI.Models.ViewModels;
 using Ecomm.UI.ServicesConnection;

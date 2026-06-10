@@ -1,7 +1,10 @@
 ﻿@using Ecomm.UI.Common
 @model IEnumerable<Ecomm.UI.Models.BookDtos.BookListDto>
 @{
-    Layout = "_HomeLayout";
+    Layout = "_CustomerLayout";
+}
+@section Styles {
+    <link rel="stylesheet" href="~/css/siteHome.css" asp-append-version="true" />
 }
 <section class="hero-section">
     <div class="hero-content">

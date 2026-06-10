@@ -1,8 +1,11 @@
 ﻿@using Ecomm.UI.Common
 @model Ecomm.UI.Models.ViewModels.CoverTypeTrashViewModel
 @{
-    Layout = "_TrashLayout";
+    Layout = "_AdminLayout";
     ViewData["Title"] = "Deleted CoverTypes";
+}
+@section Styles {
+    <link rel="stylesheet" href="~/css/Trash.css" asp-append-version="true" />
 }
 <div class="trash-header">
     <div class="trash-header-left">
@@ -26,7 +29,6 @@
         </span>
     </div>
 </div>
-<!-- STATS -->
 <div class="stats-grid">
     <div class="stats-card">
         <div class="stats-icon red">
@@ -93,9 +95,7 @@
         </div>
     </div>
 </div>
-<!-- TABLE CARD -->
 <div class="trash-card">
-    <!-- TOOLBAR -->
     <div class="table-toolbar">
         <form method="get">
             <div class="search-box">
@@ -108,7 +108,6 @@
             Refresh
         </a>
     </div>
-    <!-- TABLE -->
     <div class="table-responsive">
         <table class="trash-table">
             <thead>
@@ -199,7 +198,6 @@
             </tbody>
         </table>
     </div>
-    <!-- FOOTER -->
     <div class="table-footer">
         <div class="table-info">
             Showing@(((Model.PagedCoverTypes.PageNumber - 1) * Model.PagedCoverTypes.PageSize) + 1)
@@ -209,7 +207,6 @@
             @Model.PagedCoverTypes.TotalCount
             entries
         </div>
-        <!-- PAGINATION -->
         <div class="custom-pagination">
             @if (Model.PagedCoverTypes.HasPrevious)
             {

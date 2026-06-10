@@ -3,7 +3,7 @@
 @{
     ViewData["Title"] = "Upsert";
     var title = Model.Books.Id != 0 ? "Update Book" : "Add Book";
-    Layout = "_BookLayout";
+    Layout = "_AdminLayout";
     var save = Model.Books.Id != 0 ? "Update" : "Save";
 }
 <div class="book-page-bg">

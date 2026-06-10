@@ -1,14 +1,8 @@
 ﻿using Ecomm.UI.Common;
+using Ecomm.UI.Models.AuthDtos;
 using Ecomm.UI.Models.BookDtos;
-using Ecomm.UI.Models.CategoryDto;
-using Ecomm.UI.Models.CoverTypeDto;
-using Ecomm.UI.Models.ViewModels;
 using Ecomm.UI.ServicesConnection;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using System;
-using System.Runtime.InteropServices;
-using System.Threading.Tasks;
 
 namespace Ecomm.UI.Areas.Admin.Controllers
 {
@@ -28,6 +22,11 @@ namespace Ecomm.UI.Areas.Admin.Controllers
         public IActionResult Manage()
         {
             return View();
+        }
+        public async Task<IActionResult> GetAllUser()
+        {
+            var getUsers = await _apiService.GetAsync<IEnumerable<UserProfileDto>>(SD.AuthAPIPath + "/AllProfiles");
+            return View(getUsers);
         }
     }
 }

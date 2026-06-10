@@ -18,7 +18,6 @@ namespace Ecomm.UI.Areas.Customer.Controllers
         {
             _apiService = apiService;
         }
-
         public async Task<IActionResult> Index()
         {
             var cart = await _apiService.GetAsync<CartDto>(SD.CartAPIPath);
@@ -37,8 +36,7 @@ namespace Ecomm.UI.Areas.Customer.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return RedirectToAction(
-                    "Details","Home", new { id = dto.BookId });
+                return RedirectToAction("Details","Home", new { id = dto.BookId });
             }
             try
             {
