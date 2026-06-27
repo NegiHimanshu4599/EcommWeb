@@ -1,16 +1,22 @@
 ﻿@using System.IdentityModel.Tokens.Jwt
+@using System.Security.Claims
 @inject IHttpContextAccessor HttpContextAccessor
 @{
     var token = HttpContextAccessor.HttpContext.Request.Cookies["JWT"];
     // var token = HttpContextAccessor.HttpContext.Session["JWT"];
     string email = "";
     string role = "";
+    string userName = "";
+    string firstName = "";
     if (!string.IsNullOrEmpty(token))
     {
         var handler = new JwtSecurityTokenHandler();
         var jwt = handler.ReadJwtToken(token);
         email = jwt.Claims.FirstOrDefault(x => x.Type.Contains("email"))?.Value;
         role = jwt.Claims.FirstOrDefault(x => x.Type.Contains("role"))?.Value;
+        // userName = jwt.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Name)?.Value;
+        userName = jwt.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Name)?.Value ?? "";
+        firstName = userName.Split(' ')[0];
     }
     ViewBag.UserRole = role;
 }
@@ -20,7 +26,7 @@
         <a class="nav-icon dropdown-toggle" data-bs-toggle="dropdown"
            href="#">
             <i class="fa-solid fa-user"></i>
-            Hello @email
+            Hello @firstName
         </a>
         <div class="dropdown-menu dropdown-menu-end">
             <a class="dropdown-item" asp-area="Customer" asp-controller="Auth" asp-action="CompleteProfile">

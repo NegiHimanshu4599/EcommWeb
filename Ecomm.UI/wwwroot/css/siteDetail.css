@@ -294,7 +294,7 @@ body {
 }
 
 /* NAVBAR */
-.custom-navbar {
+/*.custom-navbar {
     height: 90px;
     background: white;
     display: flex;
@@ -311,8 +311,21 @@ body {
     display: flex;
     align-items: center;
     gap: 50px;
+}*/
+.custom-navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: nowrap;
+    gap: 15px;
 }
 
+.nav-left,
+.nav-right {
+    display: flex;
+    align-items: center;
+    flex-wrap: nowrap;
+}
 .logo {
     text-decoration: none;
     display: flex;

@@ -21,5 +21,6 @@
         public static string CoverTypeAPIPath => $"{BookBaseUrl}/api/CoverType";
         //Cart Path
         public static string CartAPIPath => $"{CartBaseUrl}/api/Cart";
+        public static string WishlistAPIPath => $"{CartBaseUrl}/api/Wishlist";
     }
 }

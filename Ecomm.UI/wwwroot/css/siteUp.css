@@ -155,3 +155,110 @@ label {
     justify-content: space-between;
     align-items: center;
 }
+@media (max-width: 768px) {
+
+    /* Stack Layout */
+    .profile-layout {
+        flex-direction: column;
+    }
+
+    /* Sidebar Full Width */
+    .sidebar {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid #eee;
+        padding: 15px;
+    }
+
+    .logo h3 {
+        margin-bottom: 20px;
+        text-align: center;
+    }
+
+    /* Menu Horizontal Scroll */
+    .sidebar-menu {
+        display: flex;
+        overflow-x: auto;
+        gap: 10px;
+        white-space: nowrap;
+        padding-bottom: 10px;
+    }
+
+        .sidebar-menu li {
+            margin-bottom: 0;
+            flex-shrink: 0;
+        }
+
+    /* Main Content */
+    .profile-main {
+        padding: 20px;
+    }
+
+    /* Header */
+    .profile-header h2 {
+        font-size: 30px;
+    }
+
+    .profile-header p {
+        font-size: 14px;
+    }
+
+    /* Card */
+    .profile-card {
+        padding: 20px;
+    }
+
+    /* Section Title */
+    .section-title {
+        font-size: 20px;
+    }
+
+        .section-title i {
+            font-size: 22px;
+        }
+
+    /* Buttons */
+    .profile-btn-group {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .save-btn {
+        width: 100%;
+        text-align: center;
+    }
+}
+@media (max-width: 576px) {
+
+    .profile-header h2 {
+        font-size: 24px;
+    }
+
+    .profile-card {
+        padding: 15px;
+        border-radius: 12px;
+    }
+
+    .profile-input {
+        height: 48px;
+        font-size: 14px;
+    }
+
+    label {
+        font-size: 14px;
+    }
+
+    .section-title {
+        font-size: 18px;
+    }
+}
+@media (max-width: 768px) {
+    .sidebar {
+        display: none;
+    }
+
+    .profile-main {
+        width: 100%;
+        padding: 15px;
+    }
+}

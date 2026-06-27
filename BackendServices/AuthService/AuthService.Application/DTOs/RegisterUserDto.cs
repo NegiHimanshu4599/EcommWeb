@@ -1,24 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace AuthService.Application.DTOs
 {
     public class RegisterUserDto
     {
         [Required]
-        public string UserName { get; set; }
+        [MaxLength(150)]
+        public string UserName { get; set; } = null!;
         [Required]
-        [EmailAddress(ErrorMessage ="Invalid Email Format")]
-        public string Email { get; set; }
+        [EmailAddress]
+        [MaxLength(256)]
+        public string Email { get; set; } = null!;
         [Required]
-        [MinLength(6, ErrorMessage = "Password must be at least 6 characters long")]
-        public string Password { get; set; }
+        [MinLength(6)]
+        [MaxLength(100)]
+        public string Password { get; set; } = null!;
         [Required]
-        [Compare("Password", ErrorMessage = "Password Not Matched")]
-        public string ConfirmPassword { get; set; }
+        [Compare(nameof(Password))]
+        public string ConfirmPassword { get; set; } = null!;
     }
 }

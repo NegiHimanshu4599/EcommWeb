@@ -1,114 +1,316 @@
-﻿.Register-container {
-    height: 100vh;
-    background-color: #9A616D;
+﻿.register-page {
+    min-height: 100vh;
+    background: #f4f1ee;
+    padding: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
-.Register-card {
-    width: 90%;
-    max-width: 1100px;
-    height: 650px;
-    display: flex;
-    border-radius: 15px;
-    overflow: hidden;
+.register-card {
+    width: 100%;
+    max-width: 1700px;
+    height: 610px;
     background: #fff;
+    border-radius: 28px;
+    overflow: hidden;
+    display: flex;
+    box-shadow: 0 12px 35px rgba(0,0,0,.08);
+    position: relative;
 }
 
-/* LEFT */
-.Register-left {
-    width: 50%;
+/* RED CIRCLE */
+
+.corner-circle {
+    position: absolute;
+    top: -70px;
+    left: 500px;
+    width: 180px;
+    height: 180px;
+    background: #b1093f;
+    border-radius: 50%;
+    z-index: 20;
+}
+
+/* LEFT SIDE */
+
+.register-left {
+    width: 48%;
     position: relative;
     overflow: hidden;
 }
 
-.Register-image {
+.register-image {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transform: scale(1.05);
+    filter: blur(1px);
+    transform: scale(1.02);
 }
 
-/* LIGHT OVERLAY */
-.Register-left::after {
+.register-left::after {
     content: "";
     position: absolute;
     inset: 0;
-    background: linear-gradient(to right, rgba(255,255,255,0.7), rgba(255,255,255,0.2));
+    background: rgba(255,255,255,.48);
 }
 
-.Register-overlay {
+.register-overlay {
     position: absolute;
-    top: 20%;
-    left: 8%;
-    z-index: 2;
-    max-width: 300px;
+    top: 80px;
+    left: 55px;
+    z-index: 50;
+    width: 420px;
 }
 
-    .Register-overlay h1 {
-        font-size: 2.4rem;
+    .register-overlay h1 {
+        font-family: Georgia, serif;
+        font-size: 52px;
+        font-weight: 700;
+        line-height: 1.05;
+        color: #111;
+        margin-bottom: 12px;
+    }
+
+        .register-overlay h1 span {
+            color: #a40f3f;
+        }
+
+    .register-overlay p {
+        font-size: 17px;
+        color: #222;
+        line-height: 1.55;
+        margin-bottom: 22px;
         font-weight: 500;
-        color: #2b1a1a;
     }
 
-    .Register-overlay p {
-        margin-top: 15px;
-        color: #555;
-    }
+.feature-list {
+    margin-top: 5px;
+}
 
-/* RIGHT */
-.Register-right {
-    width: 50%;
+.feature-item {
     display: flex;
     align-items: center;
+    gap: 14px;
+    margin-bottom: 16px;
+}
+
+.feature-icon {
+    width: 58px;
+    height: 58px;
+    border-radius: 50%;
+    background: #a40f3f;
+    color: white;
+    display: flex;
     justify-content: center;
+    align-items: center;
+    font-size: 22px;
+    flex-shrink: 0;
+}
+
+.feature-item h5 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 700;
+    color: #111;
+}
+
+.feature-item span {
+    display: block;
+    font-size: 15px;
+    color: #222;
+    font-weight: 500;
+}
+
+/* RIGHT SIDE */
+
+.register-right {
+    width: 52%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 15px 0;
 }
 
 .form-wrapper {
-    width: 85%;
+    width: 78%;
+    max-width: 620px;
 }
 
-.title {
+/* LOGO */
+
+.brand-logo {
     text-align: center;
-    color: #7a1f2b;
-    font-weight: bold;
+    margin-bottom: 6px;
+}
+
+    .brand-logo img {
+        width: 205px;
+    }
+
+/* TITLE */
+
+.form-wrapper h2 {
+    font-size: 38px;
+    font-weight: 700;
+    color: #111;
+    margin-bottom: 2px;
 }
 
 .subtitle {
-    text-align: center;
-    color: gray;
-    margin-bottom: 20px;
+    font-size: 16px;
+    color: #777;
+    margin-bottom: 14px;
 }
 
-/* INPUT */
+/* INPUTS */
+
 .custom-input {
-    height: 45px;
-    border-radius: 8px;
-    border: 1px solid #ddd;
+    height: 48px;
+    border-radius: 10px;
+    border: 1px solid #d8d8d8;
+    font-size: 15px;
+    padding-left: 16px;
 }
+
+    .custom-input:focus {
+        box-shadow: none;
+        border-color: #a40f3f;
+    }
+
+/* TERMS */
+
+.terms-check {
+    margin-top: 8px;
+    margin-bottom: 10px;
+    font-size: 14px;
+    color: #444;
+}
+
+    .terms-check input {
+        margin-right: 8px;
+    }
 
 /* BUTTON */
-.Register-btn {
+
+.register-btn {
     width: 100%;
-    padding: 12px;
-    border-radius: 8px;
-    background: linear-gradient(to right, #3b0a2a, #7a1f2b);
-    color: #fff;
+    height: 54px;
     border: none;
+    border-radius: 10px;
+    background: linear-gradient(90deg,#8c012f,#b30045);
+    color: white;
+    font-size: 18px;
+    font-weight: 600;
 }
+
+/* DIVIDER */
+
+.divider {
+    text-align: center;
+    margin: 12px 0;
+    position: relative;
+    color: #777;
+}
+
+    .divider::before,
+    .divider::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        width: 38%;
+        height: 1px;
+        background: #ddd;
+    }
+
+    .divider::before {
+        left: 0;
+    }
+
+    .divider::after {
+        right: 0;
+    }
 
 /* GOOGLE */
+
 .google-btn {
     width: 100%;
+    height: 48px;
     border: 1px solid #ddd;
+    border-radius: 10px;
     background: white;
-    padding: 10px;
-    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    font-size: 16px;
+    font-weight: 500;
 }
 
-/* LINK */
-.link {
-    color: #7a1f2b;
-    text-decoration: none;
+/* SIGN IN */
+
+.login-link {
+    text-align: center;
+    margin-top: 14px;
+    padding-bottom: 0;
+    font-size: 16px;
+}
+
+    .login-link a {
+        color: #a40f3f;
+        text-decoration: none;
+        font-weight: 700;
+    }
+
+/* TABLET */
+
+@media(max-width:1200px) {
+
+    .register-card {
+        flex-direction: column;
+        height: auto;
+    }
+
+    .register-left,
+    .register-right {
+        width: 100%;
+    }
+
+    .register-left {
+        height: 380px;
+    }
+
+    .corner-circle {
+        display: none;
+    }
+}
+
+/* MOBILE */
+
+@media(max-width:768px) {
+
+    .register-left {
+        display: none;
+    }
+
+    .register-right {
+        width: 100%;
+    }
+
+    .form-wrapper {
+        width: 92%;
+        padding: 20px 0;
+    }
+
+        .form-wrapper h2 {
+            font-size: 34px;
+        }
+
+    .brand-logo img {
+        width: 180px;
+    }
+
+    .register-card {
+        height: auto;
+    }
 }

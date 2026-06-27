@@ -1,14 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace AuthService.Application.DTOs
 {
     public class GoogleLoginDto
     {
-        public string Email { get; set; }
-        public string Name { get; set; }
+        [Required]
+        [EmailAddress]
+        public string Email { get; set; } = null!;
+        [Required]
+        [MaxLength(150)]
+        public string Name { get; set; } = null!;
     }
 }

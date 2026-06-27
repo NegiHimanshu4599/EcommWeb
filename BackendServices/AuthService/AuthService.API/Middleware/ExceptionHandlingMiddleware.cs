@@ -7,8 +7,7 @@ namespace AuthService.API.Middleware
     {
         private readonly RequestDelegate _next;
         private readonly ILogger<ExceptionHandlingMiddleware> _logger;
-        public ExceptionHandlingMiddleware(RequestDelegate next,
-            ILogger<ExceptionHandlingMiddleware> logger)
+        public ExceptionHandlingMiddleware(RequestDelegate next,ILogger<ExceptionHandlingMiddleware> logger)
         {
             _next = next;
             _logger = logger;
@@ -32,18 +31,13 @@ namespace AuthService.API.Middleware
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Unhandled Exception");
-                //await HandleExceptionAsync(context, HttpStatusCode.InternalServerError, ex.ToString());
                 await HandleExceptionAsync(context,HttpStatusCode.InternalServerError,"An Error Occurred While Processing Your Request.");
             }
         }
-        private static async Task HandleExceptionAsync(
-            HttpContext context,
-            HttpStatusCode statusCode,
-            string message)
+        private static async Task HandleExceptionAsync(HttpContext context, HttpStatusCode statusCode,string message)
         {
             context.Response.ContentType = "application/json";
             context.Response.StatusCode = (int)statusCode;
-
             var response = new
             {
                 context.Response.StatusCode,

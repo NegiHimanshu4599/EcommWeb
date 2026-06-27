@@ -1,4 +1,4 @@
-﻿using AuthService.Domain.Entities;
+﻿  using AuthService.Domain.Entities;
 using AuthService.Application.DTOs;
 using AuthService.Application.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -45,26 +45,6 @@ namespace AuthService.API.Controllers
             var user = await _authService.RegisterAsync(dto);
             return Ok(user);
         }
-        [Authorize]
-        [HttpGet("profile")]
-        public async Task<IActionResult> GetProfile()
-        {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (userId == null)
-                return NotFound();
-            var result = await _authService.GetProfileAsync(userId);
-            return Ok(result);
-        }
-        [Authorize]
-        [HttpPut("updateProfile")]
-        public async Task<IActionResult> UpdateProfile(UpdateUserDto dto)
-        {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (userId == null)
-                return NotFound();
-            var result = await _authService.UpdateProfileAsync(userId, dto);
-            return Ok(result);
-        }
         [Authorize(Roles = "Admin")]
         [HttpDelete("deactivate/{userId}")]
         public async Task<IActionResult> Deactivate(string userId)
@@ -84,12 +64,6 @@ namespace AuthService.API.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
             var result = await _authService.GoogleLoginAsync(model);
-            return Ok(result);
-        }
-        [HttpGet("AllProfiles")]
-        public async Task<IActionResult> GetAllProfileAsync()
-        {
-            var result = await _authService.GetAllProfileAsync();
             return Ok(result);
         }
     }

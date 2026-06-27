@@ -37,7 +37,8 @@ namespace CartService.Application.Services
             if (exists)
             {
                 _logger.LogWarning("Book {BookId} already in wishlist", bookId);
-                return;
+                //return;
+                throw new WishlistException("Book Already Exists");
             }
             var response = await _httpClient.GetAsync($"/api/Book/{bookId}");
             if (response.StatusCode == HttpStatusCode.NotFound)
@@ -95,7 +96,6 @@ namespace CartService.Application.Services
                 Items = wishlist.WishlistItems.Select(x =>
                 {
                     booksDictionary.TryGetValue(x.BookId, out var book);
-
                     return new WishlistItemDto
                     {
                         BookId = x.BookId,

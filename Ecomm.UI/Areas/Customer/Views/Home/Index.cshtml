@@ -3,6 +3,167 @@
 @{
     Layout = "_CustomerLayout";
 }
+<section class="hero-section">
+    <div class="hero-banner">
+        <div class="hero-content">
+            <h1>
+                Discover Your
+                <br />
+                Next <span>Favorite Book</span>
+            </h1>
+            <p>
+                Explore thousands of books across all genres.
+                Find. Read. Inspire.
+            </p>
+            <div class="hero-buttons">
+                <a href="#bestSellers" class="shop-btn">
+                    Shop Now
+                </a>
+                <a href="#" class="explore-btn">
+                    <i class="fas fa-play-circle"></i>
+                    Explore Collection
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- SERVICE STRIP -->
+<section class="service-strip">
+    <div class="service-item">
+        <i class="fas fa-truck"></i>
+        <div>
+            <h5>Free Delivery</h5>
+            <span>On orders above ₹499</span>
+        </div>
+    </div>
+    <div class="service-item">
+        <i class="fas fa-tags"></i>
+        <div>
+            <h5>Best Prices</h5>
+            <span>Exclusive deals & offers</span>
+        </div>
+    </div>
+    <div class="service-item">
+        <i class="fas fa-shield-alt"></i>
+        <div>
+            <h5>Secure Payment</h5>
+            <span>100% secure checkout</span>
+        </div>
+    </div>
+    <div class="service-item">
+        <i class="fas fa-headset"></i>
+        <div>
+            <h5>24/7 Support</h5>
+            <span>We're here to help</span>
+        </div>
+    </div>
+    <div class="service-item">
+        <i class="fas fa-sync-alt"></i>
+        <div>
+            <h5>Easy Returns</h5>
+            <span>Hassle-free returns</span>
+        </div>
+    </div>
+</section>
+<!-- TOP CATEGORIES -->
+<section class="category-section">
+    <div class="section-title">
+        <h2>Top Categories</h2>
+        <a href="#">
+            View All Categories
+            <i class="fas fa-arrow-right"></i>
+        </a>
+    </div>
+    <div class="category-grid">
+        <div class="category-card">
+            <i class="fas fa-book-open"></i>
+            <h5>Fiction</h5>
+            <span>1200+ Books</span>
+        </div>
+        <div class="category-card">
+            <i class="fas fa-user"></i>
+            <h5>Non-Fiction</h5>
+            <span>950+ Books</span>
+        </div>
+        <div class="category-card">
+            <i class="fas fa-chart-line"></i>
+            <h5>Self Help</h5>
+            <span>850+ Books</span>
+        </div>
+        <div class="category-card">
+            <i class="fas fa-child"></i>
+            <h5>Children</h5>
+            <span>1100+ Books</span>
+        </div>
+        <div class="category-card">
+            <i class="fas fa-graduation-cap"></i>
+            <h5>Academic</h5>
+            <span>1500+ Books</span>
+        </div>
+        <div class="category-card">
+            <i class="fas fa-briefcase"></i>
+            <h5>Business</h5>
+            <span>700+ Books</span>
+        </div>
+        <div class="category-card">
+            <i class="fas fa-comments"></i>
+            <h5>Comics</h5>
+            <span>650+ Books</span>
+        </div>
+        <div class="category-card">
+            <i class="fas fa-landmark"></i>
+            <h5>History</h5>
+            <span>500+ Books</span>
+        </div>
+    </div>
+</section>
+<!-- BEST SELLERS -->
+<section class="best-seller-section" id="bestSellers">
+    <div class="section-title">
+        <h2>Best Selling Books</h2>
+        <a href="#">
+            View All Best Sellers
+            <i class="fas fa-arrow-right"></i>
+        </a>
+    </div>
+    <div class="book-slider">
+        @foreach (var book in Model.Take(8))
+        {
+            <div class="book-card">
+                <div class="discount-badge">
+                    -20%
+                </div>
+                <img src="@($"{SD.BookBaseUrl}{book.ImageUrl}")" alt="@book.Title" />
+                <div class="book-info">
+                    <h5>@book.Title</h5>
+                    <p>@book.Author</p>
+                    <div class="rating">
+                        ★★★★★
+                        <span>(4.8)</span>
+                    </div>
+                    <div class="price-row">
+                        <span class="price">
+                            ₹@book.Price
+                        </span>
+                        <span class="old-price">
+                            ₹@(book.Price + 150)
+                        </span>
+                    </div>
+                    <a asp-area="Customer" asp-controller="Home" asp-action="Details" asp-route-id="@book.Id" class="details-btn">
+                        View Details
+                    </a>
+                </div>
+            </div>
+        }
+    </div>
+</section>
+
+
+@* @using Ecomm.UI.Common
+@model IEnumerable<Ecomm.UI.Models.BookDtos.BookListDto>
+@{
+    Layout = "_CustomerLayout";
+}
 @section Styles {
     <link rel="stylesheet" href="~/css/siteHome.css" asp-append-version="true" />
 }
@@ -64,4 +225,4 @@
             </div>
         }
     </div>
-</section>
+</section> *@

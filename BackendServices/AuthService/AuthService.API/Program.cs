@@ -1,19 +1,20 @@
+using AuthService.API.Middleware;
 using AuthService.Application.Interfaces;
+using AuthService.Application.Mappings;
+using AuthService.Application.Options;
+using AuthService.Application.Security;
+using AuthService.Application.Services;
+using AuthService.Domain.Entities;
+using AuthService.Domain.Interface;
 using AuthService.Infrastructure.Data;
 using AuthService.Infrastructure.Data.IdentitySeeder;
+using AuthService.Infrastructure.Repository;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
-using AuthService.Infrastructure.Repository;
-using AuthService.Application.Services;
-using AuthService.Application.Mappings;
-using AuthService.Application.Security;
-using AuthService.Domain.Interface;
-using AuthService.Domain.Entities;
-using AuthService.API.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 var conStr = builder.Configuration.GetConnectionString("cs") ?? throw new InvalidOperationException("Connection String 'cs' is not Found");
@@ -21,12 +22,17 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 options.UseSqlServer(conStr));
 // Add services to the container.
 builder.Services.AddControllers();
-builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IUserProfileRepository, UserProfileRepository>();
+builder.Services.AddScoped<IAddressRepository, AddressRepository>();
 builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
-builder.Services.AddScoped<IAuthService, AuthServices>();
+builder.Services.AddScoped<IAuthService, AuthService.Application.Services.AuthService>();
+builder.Services.AddScoped<IAddressService, AddressService>();
+builder.Services.AddScoped<IUserProfileService, UserProfileService>();
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
-builder.Services.AddScoped<JwtTokenGenerator>();
+builder.Services.Configure<JwtOptions>(
+    builder.Configuration.GetSection(JwtOptions.SectionName));
+builder.Services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
 builder.Services.AddHttpContextAccessor();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

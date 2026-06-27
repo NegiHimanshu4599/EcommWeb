@@ -1,4 +1,5 @@
-﻿using CartService.Application.Interfaces;
+﻿using CartService.Application.Exceptions;
+using CartService.Application.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -26,10 +27,57 @@ namespace CartService.API.Controllers
         [HttpPost("add/{bookId}")]
         public async Task<IActionResult> Add(int bookId)
         {
-            var userId = GetUserId();
-            await _wishlistService.AddAsync(userId, bookId);
-            return Ok("Added to wishlist");
+            try
+            {
+                var userId = GetUserId();
+
+                await _wishlistService.AddAsync(userId, bookId);
+
+                return Ok(new
+                {
+                    success = true,
+                    message = "Book added to wishlist"
+                });
+            }
+            catch (Exception ex) // <-- catch ALL exceptions
+            {
+                var type = ex.GetType().FullName; // put breakpoint here
+                return BadRequest(new
+                {
+                    ExceptionType = type,
+                    Message = ex.Message
+                });
+            }
         }
+        //[HttpPost("add/{bookId}")]
+        //public async Task<IActionResult> Add(int bookId)
+        //{
+        //    try
+        //    {
+        //        var userId = GetUserId();
+        //        await _wishlistService.AddAsync(userId, bookId);
+        //        return Ok(new
+        //        {
+        //            success = true,
+        //            message = "Book added to wishlist"
+        //        });
+        //    }
+        //    catch (WishlistException ex)
+        //    {
+        //        return BadRequest(new
+        //        {
+        //            success = false,
+        //            message = ex.Message
+        //        });
+        //    }
+        //}
+        //[HttpPost("add/{bookId}")]
+        //public async Task<IActionResult> Add(int bookId)
+        //{
+        //    var userId = GetUserId();
+        //    await _wishlistService.AddAsync(userId, bookId);
+        //    return NoContent();
+        //}
         [HttpGet]
         public async Task<IActionResult> Get()
         {

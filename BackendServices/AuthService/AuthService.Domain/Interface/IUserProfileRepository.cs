@@ -7,7 +7,8 @@ using System.Threading.Tasks;
 
 namespace AuthService.Domain.Interface
 {
-    public interface IUserRepository:IRepository<ApplicationUser>
+    public interface IUserProfileRepository : IRepository<UserProfile, string>
     {
+        Task<UserProfile?> GetByUserIdAsync(string userId);
     }
 }

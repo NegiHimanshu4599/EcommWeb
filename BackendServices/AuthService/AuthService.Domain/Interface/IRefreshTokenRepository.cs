@@ -7,9 +7,10 @@ using System.Threading.Tasks;
 
 namespace AuthService.Domain.Interface
 {
-    public  interface IRefreshTokenRepository:IRepository<RefreshToken>
+    public interface IRefreshTokenRepository: IRepository<RefreshToken, int>
     {
         Task<IEnumerable<RefreshToken>> GetActiveTokensByUserId(string userId);
         Task RevokeAllUserTokens(string userId);
+        Task<RefreshToken?> GetByTokenAsync(string hashedToken);
     }
 }
