@@ -1,110 +1,69 @@
 ﻿@model Ecomm.UI.Models.AuthDtos.UserProfileDto
-
 @{
     Layout = "_AuthProfileLayout";
 }
-
 <div class="profile-wrapper">
-
     <div class="profile-header">
         <h2>My Profile</h2>
         <p>Manage your personal information and account details.</p>
     </div>
-
     <div class="profile-card">
-
         <form method="post">
-
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-
             <!-- PERSONAL -->
             <div class="section-title">
                 <i class="bi bi-person-circle"></i>
                 <span>Personal Information</span>
             </div>
-
             <div class="row g-4">
-
                 <div class="col-md-6">
                     <label>Full Name</label>
-                    <input asp-for="Name"
-                           class="form-control profile-input"
-                           placeholder="Enter full name" />
+                    <input asp-for="Name" class="form-control profile-input" placeholder="Enter full name" />
                 </div>
-
                 <div class="col-md-6">
                     <label>Email</label>
-                    <input asp-for="Email"
-                           class="form-control profile-input"
-                           placeholder="Enter email" />
+                    <input asp-for="Email" class="form-control profile-input" placeholder="Enter email" />
                 </div>
-
                 <div class="col-md-6">
                     <label>Phone Number</label>
-                    <input asp-for="PhoneNumber"
-                           class="form-control profile-input"
-                           placeholder="Phone Number" />
+                    <input asp-for="PhoneNumber" class="form-control profile-input" placeholder="Phone Number" />
                 </div>
-
             </div>
-
             <!-- ADDRESS -->
             <div class="section-title mt-5">
                 <i class="bi bi-geo-alt"></i>
                 <span>Address Information</span>
             </div>
-
             <div class="row g-4">
-
                 <div class="col-12">
                     <label>Street Address</label>
-                    <input asp-for="StreetAddress"
-                           class="form-control profile-input"
-                           placeholder="Street Address" />
+                    <input asp-for="StreetAddress" class="form-control profile-input" placeholder="Street Address" />
                 </div>
-
                 <div class="col-md-6">
                     <label>City</label>
-                    <input asp-for="City"
-                           class="form-control profile-input"
-                           placeholder="City" />
+                    <input asp-for="City" class="form-control profile-input" placeholder="City" />
                 </div>
-
                 <div class="col-md-6">
                     <label>State</label>
-                    <input asp-for="State"
-                           class="form-control profile-input"
-                           placeholder="State" />
+                    <input asp-for="State" class="form-control profile-input" placeholder="State" />
                 </div>
-
                 <div class="col-md-6">
                     <label>Postal Code</label>
-                    <input asp-for="PostalCode"
-                           class="form-control profile-input"
-                           placeholder="Postal Code" />
+                    <input asp-for="PostalCode" class="form-control profile-input" placeholder="Postal Code" />
                 </div>
-
             </div>
             <!-- BUTTON -->
             <div class="profile-btn-group mt-5">
-
-                <a asp-area="Customer"
-                   asp-controller="Home"
-                   asp-action="Index"
-                   class="save-btn">
+                <a asp-area="Customer" asp-controller="Home" asp-action="Index" class="save-btn">
                     Skip Now
                 </a>
                 <button type="submit" class="save-btn">
                     Save & Continue
                 </button>
             </div>
-
         </form>
-
     </div>
-
 </div>
-
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
 }

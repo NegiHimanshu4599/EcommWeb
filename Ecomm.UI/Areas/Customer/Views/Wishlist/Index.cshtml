@@ -1,0 +1,105 @@
+﻿@using Ecomm.UI.Common
+@using Ecomm.UI.Models.WishlistDto
+@model WishlistDto
+@{
+    Layout = "_CustomerLayout";
+    var total = Model?.Items?.Sum(x => x.Price) ?? 0;
+    var count = Model?.Items?.Count ?? 0;
+}
+@section Styles {
+    <link rel="stylesheet"
+          href="~/css/siteWishlist.css"
+          asp-append-version="true" />
+}
+<div class="wishlist-page">
+    <div class="wishlist-header">
+        <div>
+            <h1>
+                <i class="far fa-heart"></i>
+                My Wishlist
+            </h1>
+            <p>
+                Books you love, saved for later.
+            </p>
+        </div>
+    </div>
+    @if (Model == null || !Model.Items.Any())
+    {
+        <div class="empty-wishlist">
+            <i class="far fa-heart"></i>
+            <h2>
+                Your Wishlist is Empty
+            </h2>
+            <p>
+                Save books you love and find them here later.
+            </p>
+            <a asp-area="Customer" asp-controller="Home" asp-action="Index" class="browse-btn">
+                Browse Books
+            </a>
+        </div>
+    }
+    else
+    {
+        <div class="wishlist-layout">
+            <!-- LEFT -->
+            <div class="wishlist-items">
+                @foreach (var item in Model.Items)
+                {
+                    <div class="wishlist-card">
+                        <div class="wishlist-image">
+                            <img src="@($"{SD.BookBaseUrl}{item.ImageUrl}")" alt="@item.Title" />
+                        </div>
+                        <div class="wishlist-info">
+                            <h3>
+                                @item.Title
+                            </h3>
+                            <div class="wishlist-price">
+                                ₹@item.Price
+                            </div>
+                        </div>
+                        <div class="wishlist-actions">
+                            <form asp-action="MoveToCart" method="post">
+                                <input type="hidden"name="bookId" value="@item.BookId" />
+                                <button type="submit" class="cart-btn">
+                                    <i class="fas fa-shopping-cart"></i>
+                                    Add To Cart
+                                </button>
+                            </form>
+                            <form asp-action="Remove" method="post">
+                                <input type="hidden" name="bookId" value="@item.BookId" />
+                                <button type="submit" class="remove-btn">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                }
+            </div>
+            <!-- RIGHT -->
+            <div class="wishlist-summary">
+                <h3>
+                    Wishlist Summary
+                </h3>
+                <div class="summary-row">
+                    <span>Items</span>
+                    <strong>
+                        @count
+                    </strong>
+                </div>
+                <div class="summary-row">
+                    <span>Total</span>
+                    <strong>
+                        ₹@total
+                    </strong>
+                </div>
+                <hr />
+                <form asp-action="MoveAllToCart" method="post">
+                    <button type="submit" class="move-all-btn">
+                        <i class="fas fa-shopping-cart"></i>
+                        Move All To Cart
+                    </button>
+                </form>
+            </div>
+        </div>
+    }
+</div>

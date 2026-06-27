@@ -1,6 +1,6 @@
-﻿using AuthService.Domain.Entities;
+﻿using AuthService.Application.DTOs;
+using AuthService.Domain.Entities;
 using AutoMapper;
-using AuthService.Application.DTOs;
 
 namespace AuthService.Application.Mappings
 {
@@ -8,16 +8,47 @@ namespace AuthService.Application.Mappings
     {
         public MappingProfile()
         {
-            CreateMap<ApplicationUser, LoginResponseDto>()
-                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
-                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.UserName));
-            CreateMap<ApplicationUser, RegisterResponseDto>()
-                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
-                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.UserName));
+            #region Auth
             CreateMap<RegisterUserDto, ApplicationUser>()
-                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.UserName))
-                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email));
-            CreateMap<GoogleLoginDto, ApplicationUser>();
+                .ForMember(d => d.UserName,o => o.MapFrom(s => s.UserName))
+                .ForMember(d => d.Email, o => o.MapFrom(s => s.Email))
+                .ForAllMembers(o => o.Condition((src, dest, value) => value != null));
+            CreateMap<GoogleLoginDto, ApplicationUser>()
+                .ForMember(d => d.UserName,o => o.MapFrom(s => s.Email))
+                .ForMember(d => d.Email, o => o.MapFrom(s => s.Email))
+                .ForAllMembers(o => o.Condition((src, dest, value) => value != null));
+            CreateMap<ApplicationUser, LoginResponseDto>()
+                .ForMember(d => d.Email,o => o.MapFrom(s => s.Email))
+                .ForMember(d => d.Name,o => o.MapFrom(s => s.UserProfile != null? s.UserProfile.FullName: s.UserName))
+                .ForMember(d => d.AccessToken,o => o.Ignore()).
+                ForMember(d => d.RefreshToken,o => o.Ignore())
+                .ForMember(d => d.Role,o => o.Ignore())
+                .ForMember(d => d.AccessTokenExpiry,o => o.Ignore())
+                .ForMember(d => d.IsProfileComplete, o => o.Ignore());
+            #endregion
+            #region Address
+            CreateMap<CreateAddressDto, Address>()
+                .ForMember(d => d.Id, o => o.Ignore())
+                .ForMember(d => d.UserId, o => o.Ignore())
+                .ForMember(d => d.User, o => o.Ignore())
+                .ForMember(d => d.CreatedAt, o => o.Ignore())
+                .ForMember(d => d.UpdatedAt, o => o.Ignore());
+            CreateMap<UpdateAddressDto, Address>()
+                .ForMember(d => d.Id, o => o.Ignore())
+                .ForMember(d => d.UserId, o => o.Ignore())
+                .ForMember(d => d.User, o => o.Ignore())
+                .ForMember(d => d.CreatedAt, o => o.Ignore())
+                .ForMember(d => d.UpdatedAt, o => o.Ignore());
+            CreateMap<Address, AddressDto>();
+            #endregion
+            #region UserProfile
+            CreateMap<UpdateUserProfileDto, UserProfile>()
+                .ForMember(d => d.UserId, o => o.Ignore())
+                .ForMember(d => d.User, o => o.Ignore())
+                .ForMember(d => d.CreatedAt, o => o.Ignore())
+                .ForMember(d => d.UpdatedAt, o => o.Ignore());
+            CreateMap<UserProfile, UserProfileDto>();
+            #endregion
         }
     }
 }

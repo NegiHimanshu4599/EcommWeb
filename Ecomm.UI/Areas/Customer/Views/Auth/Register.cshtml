@@ -2,53 +2,103 @@
 @{
     Layout = "_AuthRegLayout";
 }
-<section class="Register-container">
-    <div class="Register-card">
-        <!-- LEFT SIDE -->
-        <div class="Register-left">  
-            <img src="~/images/register-bg.jpg" class="Register-image" />
-            <div class="Register-overlay">
-                <h1>A New Chapter Begins Here</h1>
-                <p>Join our community and explore endless stories.</p>
-            </div>
-        </div>
-        <!-- RIGHT SIDE -->
-        <div class="Register-right">
-            <div class="form-wrapper">
-                <h2 class="title">CREATE ACCOUNT</h2>
-                <p class="subtitle">Join us and start your reading journey</p>
-                <form method="post">
-                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                    <!-- TOP FIELDS -->
-                    <div class="row g-3">
-                        <div class="col-md-6">
-                            <input asp-for="UserName" class="form-control custom-input" placeholder="Full Name" />
+<section class="register-page">
+    <div class="register-card">
+        <div class="register-left">
+            <img src="~/images/register-bg.png" class="register-image" />
+            <div class="corner-circle"></div>
+            <div class="register-overlay">
+                <h1>
+                    Welcome to
+                    <br />
+                    <span>BookEcomm!</span>
+                </h1>
+                <p>
+                    Create your account and start your reading journey with us.
+                </p>
+                <div class="feature-list">
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            📖
                         </div>
-                        <div class="col-md-6">
-                            <input asp-for="Email" class="form-control custom-input" placeholder="Email" />
-                        </div>
-                        <div class="col-md-6">
-                            <input asp-for="Password" type="password" class="form-control custom-input" placeholder="Password" />
-                        </div>
-                        <div class="col-md-6">
-                            <input asp-for="ConfirmPassword" type="password" class="form-control custom-input" placeholder="Confirm Password" />
+                        <div>
+                            <h5>Wide Collection</h5>
+                            <span>Thousands of books across categories</span>
                         </div>
                     </div>
-                    <!-- BUTTON -->
-                    <button type="submit" class="Register-btn mt-4">
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            🏷️
+                        </div>
+                        <div>
+                            <h5>Best Prices</h5>
+                            <span>Exclusive deals & discounts</span>
+                        </div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            🚚
+                        </div>
+                        <div>
+                            <h5>Fast Delivery</h5>
+                            <span>Quick and reliable delivery</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="register-right">
+            <div class="form-wrapper">
+                <div class="brand-logo">
+                    <img src="~/images/logo.png" />
+                </div>
+                <h2>Create Account</h2>
+                <p class="subtitle">
+                    Join BookEcomm and explore the world of books.
+                </p>
+                <form method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <input asp-for="UserName" class="form-control custom-input" placeholder="Full Name">
+                        </div>
+                        <div class="col-12">
+                            <input asp-for="Email" class="form-control custom-input" placeholder="Email Address">
+                        </div>
+                        <div class="col-md-6">
+                            <input asp-for="Password" type="password" class="form-control custom-input" placeholder="Password">
+                        </div>
+                        <div class="col-md-6">
+                            <input asp-for="ConfirmPassword" type="password" class="form-control custom-input" placeholder="Confirm Password">
+                        </div>
+                    </div>
+                    <div class="terms-check">
+                        <input type="checkbox">
+                        <span>
+                            I agree to Terms of Service
+                            and Privacy Policy
+                        </span>
+                    </div>
+                    <button type="submit"
+                            class="register-btn">
                         Create Account
                     </button>
                 </form>
-                <!-- GOOGLE -->
-                <form asp-controller="Auth" asp-action="ExternalLogin" method="post" class="mt-3">
-                    <button type="submit" name="provider" value="Google" class="btn google-btn">
-                        <img src="https://developers.google.com/identity/images/g-logo.png" width="20" />
-                        Sign up with Google
+                <div class="divider">
+                    or continue with
+                </div>
+                <form asp-controller="Auth" asp-action="ExternalLogin" method="post">
+                    <button type="submit" name="provider" value="Google" class="google-btn">
+                        <img src="~/images/g-logo.png"
+                             width="24">
+                        Google
                     </button>
                 </form>
-                <div class="text-center mt-2">
+                <div class="login-link">
                     Already have an account?
-                    <a asp-action="Login" class="link">Login</a>
+                    <a asp-action="Login">
+                        Sign In
+                    </a>
                 </div>
             </div>
         </div>

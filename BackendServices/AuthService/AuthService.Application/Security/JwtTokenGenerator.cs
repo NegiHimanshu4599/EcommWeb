@@ -1,53 +1,74 @@
-﻿using AuthService.Domain.Entities;
-using Microsoft.Extensions.Configuration;
+﻿using AuthService.Application.Interfaces;
+using AuthService.Application.Options;
+using AuthService.Domain.Entities;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace AuthService.Application.Security
 {
-    public class JwtTokenGenerator
+    public sealed class JwtTokenGenerator : IJwtTokenGenerator
     {
-        private readonly IConfiguration _config;
-        public JwtTokenGenerator(IConfiguration config)
+        private readonly JwtOptions _jwtOptions;
+        private static readonly JwtSecurityTokenHandler TokenHandler = new();
+
+        public JwtTokenGenerator(IOptions<JwtOptions> jwtOptions)
         {
-            _config = config;
+            _jwtOptions = jwtOptions.Value;
+            ValidateOptions();
         }
-        public string GenerateToken(ApplicationUser user, string role)
+        public string GenerateAccessToken(ApplicationUser user, IEnumerable<string> roles)
         {
+            ArgumentNullException.ThrowIfNull(user);
+            ArgumentNullException.ThrowIfNull(roles);
             var claims = new List<Claim>
             {
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim(ClaimTypes.NameIdentifier,user.Id),
-                new Claim(ClaimTypes.Name, user.Name ?? ""),
-                new Claim(ClaimTypes.Email,user.Email ?? ""),
-                new Claim(ClaimTypes.Role,role ?? "")
-            };
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
+                new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                new(JwtRegisteredClaimNames.Sub, user.Id),
+                new(JwtRegisteredClaimNames.Email, user.Email ?? string.Empty),
+                new(ClaimTypes.NameIdentifier, user.Id),
+                new(ClaimTypes.Name, user.UserName ?? string.Empty),
+                new(ClaimTypes.Email, user.Email ?? string.Empty)
+        };
+            foreach (var role in roles.Where(r => !string.IsNullOrWhiteSpace(r)).Distinct())
+            {
+                claims.Add(new Claim(ClaimTypes.Role, role));
+            }
+            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtOptions.Key));
+            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
             var token = new JwtSecurityToken(
-                issuer: _config["Jwt:Issuer"],
-                audience: _config["Jwt:Audience"],
-                expires: DateTime.UtcNow.AddMinutes(double.Parse(_config["Jwt:DurationInMinutes"])),
-                claims: claims,signingCredentials: new SigningCredentials(key, SecurityAlgorithms.HmacSha256));
-            return new JwtSecurityTokenHandler().WriteToken(token);
+                issuer: _jwtOptions.Issuer,
+                audience: _jwtOptions.Audience,
+                claims: claims,
+                expires: DateTime.UtcNow.AddMinutes(_jwtOptions.DurationInMinutes),
+                signingCredentials: credentials);
+            return TokenHandler.WriteToken(token);
         }
         public string GenerateRefreshToken()
         {
-            var randomBytes = new byte[64];
-            using var rng = RandomNumberGenerator.Create();
-            rng.GetBytes(randomBytes);
-            return Convert.ToBase64String(randomBytes);
+            return Convert.ToBase64String(RandomNumberGenerator.GetBytes(64));
         }
-        public string HashToken(string token)
+        public string HashRefreshToken(string refreshToken)
         {
-            using var sha = SHA256.Create();
-            var bytes = sha.ComputeHash(Encoding.UTF8.GetBytes(token));
-            return Convert.ToBase64String(bytes);
+            ArgumentException.ThrowIfNullOrWhiteSpace(refreshToken);
+            var hash = SHA256.HashData(Encoding.UTF8.GetBytes(refreshToken));
+            return Convert.ToBase64String(hash);
+        }
+        private void ValidateOptions()
+        {
+            if (string.IsNullOrWhiteSpace(_jwtOptions.Key))
+                throw new InvalidOperationException("JWT Key is missing.");
+            if (Encoding.UTF8.GetByteCount(_jwtOptions.Key) < 32)
+                throw new InvalidOperationException("JWT Key must be at least 32 bytes.");
+            if (string.IsNullOrWhiteSpace(_jwtOptions.Issuer))
+                throw new InvalidOperationException("JWT Issuer is missing.");
+            if (string.IsNullOrWhiteSpace(_jwtOptions.Audience))
+                throw new InvalidOperationException("JWT Audience is missing.");
+            if (_jwtOptions.DurationInMinutes <= 0)
+                throw new InvalidOperationException("JWT DurationInMinutes must be greater than zero.");
         }
     }
 }

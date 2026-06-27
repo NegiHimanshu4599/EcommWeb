@@ -3,6 +3,193 @@
 @inject IHttpContextAccessor HttpContextAccessor
 @{
     var token = HttpContextAccessor.HttpContext.Request.Cookies["JWT"];
+    string role = "";
+    if (!string.IsNullOrEmpty(token))
+    {
+        var handler = new JwtSecurityTokenHandler();
+        var jwt = handler.ReadJwtToken(token);
+        role = jwt.Claims.FirstOrDefault(x => x.Type.Contains("role"))?.Value;
+    }
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewData["Title"] - BookEcomm</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/siteHome.css" asp-append-version="true" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet" />
+    @RenderSection("Styles", required: false)
+</head>
+<body>
+    <!-- TOP BAR -->
+    <div class="top-bar">
+        <div class="custom-container top-bar-inner">
+            <div class="offer-text">
+                <i class="fas fa-gift"></i>
+                Free Delivery on orders above ₹499
+                |
+                Use Code:
+                <strong>BOOKLOVE</strong>
+            </div>
+            <div class="top-links">
+                <a href="#">
+                    <i class="fas fa-truck"></i>
+                    Track Order
+                </a>
+                <a href="#">
+                    <i class="fas fa-headset"></i>
+                    Help Center
+                </a>
+                <a asp-area="Customer" asp-controller="Wishlist" asp-action="Index">
+                    <i class="far fa-heart"></i>
+                    Wishlist
+                </a>
+            </div>
+        </div>
+    </div>
+    <!-- HEADER -->
+    <header class="main-header">
+        <div class="custom-container header-wrapper">
+            <div class="header-logo">
+                <a asp-area="Customer" asp-controller="Home" asp-action="Index">
+                    <img src="~/images/logo.png" alt="BookEcomm" />
+                </a>
+            </div>
+            <div class="search-section">
+                <select class="category-select">
+                    <option>All Categories</option>
+                    <option>Fiction</option>
+                    <option>Business</option>
+                    <option>Academic</option>
+                    <option>History</option>
+                    <option>Self Help</option>
+                </select>
+                <input type="text" placeholder="Search for books by title, author or ISBN..." />
+                <button class="search-btn">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+            <div class="header-actions">
+                @if (!string.IsNullOrEmpty(token))
+                {
+                    <div class="account-box">
+                        <i class="far fa-user"></i>
+                        <div>
+                            <small>Hello</small>
+                            <span>@role</span>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <a asp-area="Customer" asp-controller="Auth" asp-action="Login" class="account-box">
+                        <i class="far fa-user"></i>
+                        <div>
+                            <small>Hello, Sign In</small>
+                            <span>My Account</span>
+                        </div>
+                    </a>
+                }
+                <a asp-area="Customer" asp-controller="Cart" asp-action="Index" class="cart-box">
+                    <i class="fas fa-shopping-cart"></i>
+                    @if ((HttpContextAccessor.HttpContext.Session.GetInt32(SD.Ss_CartSessionCount) ?? 0) > 0)
+                    {
+                        <span class="cart-count">
+                            @(HttpContextAccessor.HttpContext.Session.GetInt32(SD.Ss_CartSessionCount))
+                        </span>
+                    }
+                    <div>
+                        <small>My Cart</small>
+                        <span>₹0.00</span>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </header>
+    <!-- NAVIGATION -->
+    <nav class="menu-bar">
+        <div class="custom-container menu-wrapper">
+            <button class="browse-category-btn">
+                <i class="fas fa-bars"></i>
+                Browse Categories
+                <i class="fas fa-chevron-down"></i>
+            </button>
+            <ul class="menu-links">
+                <li>
+                    <a asp-area="Customer" asp-controller="Home" asp-action="Index">
+                        Home
+                    </a>
+                </li>
+                <li><a href="#">Books</a></li>
+                <li><a href="#">New Releases</a></li>
+                <li><a href="#">Best Sellers</a></li>
+                <li><a href="#">Offers</a></li>
+                <li><a href="#">Authors</a></li>
+                <li><a href="#">Blog</a></li>
+                <li><a href="#">Contact Us</a></li>
+            </ul>
+        </div>
+    </nav>
+    <!-- PAGE CONTENT -->
+    <main>
+        @RenderBody()
+    </main>
+    <!-- FOOTER -->
+    <footer class="footer-section">
+        <div class="custom-container">
+            <div class="footer-grid">
+                <div>
+                    <img src="~/images/logo.png" class="footer-logo" />
+                    <p>
+                        Your World of Books.
+                        Discover, Learn and Grow with BookEcomm.
+                    </p>
+                </div>
+                <div>
+                    <h5>Quick Links</h5>
+                    <a href="#">Home</a>
+                    <a href="#">Books</a>
+                    <a href="#">Offers</a>
+                    <a href="#">Contact</a>
+                </div>
+                <div>
+                    <h5>Customer Service</h5>
+                    <a href="#">Track Order</a>
+                    <a href="#">Help Center</a>
+                    <a href="#">Returns</a>
+                </div>
+                <div>
+                    <h5>Follow Us</h5>
+                    <div class="social-icons">
+                        <i class="fab fa-facebook-f"></i>
+                        <i class="fab fa-instagram"></i>
+                        <i class="fab fa-twitter"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="copyright">
+                © @DateTime.Now.Year BookEcomm.
+                All Rights Reserved.
+            </div>
+        </div>
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+
+</body>
+</html>
+
+
+
+
+@* @using Ecomm.UI.Common
+@using System.IdentityModel.Tokens.Jwt
+@inject IHttpContextAccessor HttpContextAccessor
+@{
+    var token = HttpContextAccessor.HttpContext.Request.Cookies["JWT"];
     // var token = HttpContextAccessor.HttpContext.Session.GetString("JWT");
     string role = "";
     if (!string.IsNullOrEmpty(token))
@@ -20,92 +207,10 @@
     <title>@ViewData["Title"]</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
     <link rel="stylesheet" href="~/Ecomm.UI.styles.css" asp-append-version="true" />
-    <link rel="stylesheet"
-          href="~/css/responsive.css"
-          asp-append-version="true" />
     @RenderSection("Styles", required: false)
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
 </head>
 <body>
-    @* <header>
-        <nav class="navbar navbar-expand-lg custom-navbar">
-            <div class="container-fluid">
-
-                <a class="navbar-brand logo"
-                   asp-area="Customer"
-                   asp-controller="Home"
-                   asp-action="Index">
-                    <i class="fas fa-book-open"></i>
-                    <span>BookStore</span>
-                </a>
-
-                <button class="navbar-toggler"
-                        type="button"
-                        data-bs-toggle="collapse"
-                        data-bs-target="#mainNavbar">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-
-                <div class="collapse navbar-collapse" id="mainNavbar">
-
-                    <ul class="navbar-nav me-auto nav-links">
-
-                        <li class="nav-item">
-                            <a class="nav-link"
-                               asp-area="Customer"
-                               asp-controller="Home"
-                               asp-action="Index">
-                                Home
-                            </a>
-                        </li>
-
-                        <li class="nav-item">
-                            <a class="nav-link">Books</a>
-                        </li>
-
-                        <li class="nav-item">
-                            <a class="nav-link">Categories</a>
-                        </li>
-
-                        <li class="nav-item">
-                            <a class="nav-link">Deals</a>
-                        </li>
-
-                    </ul>
-
-                    <div class="nav-actions">
-
-                        <div class="search-box">
-                            <input type="text"
-                                   placeholder="Search books..." />
-                            <button>
-                                <i class="fas fa-search"></i>
-                            </button>
-                        </div>
-
-                        <a href="#" class="nav-icon">
-                            <i class="far fa-heart"></i>
-                            Wishlist
-                        </a>
-
-                        <a asp-area="Customer"
-                           asp-controller="Cart"
-                           asp-action="Index"
-                           class="nav-icon">
-
-                            <i class="fas fa-shopping-cart"></i>
-                            Cart
-                        </a>
-
-                        <partial name="_LoginPartial" />
-
-                    </div>
-
-                </div>
-
-            </div>
-        </nav>
-    </header> *@
     <header>
         <nav class="custom-navbar">
             <div class="nav-left">
@@ -154,7 +259,7 @@
                         <i class="fas fa-search"></i>
                     </button>
                 </div>
-                <a href="#" class="nav-icon">
+                <a  asp-area="Customer" asp-controller="Wishlist" asp-action="Index" class="nav-icon">
                     <i class="far fa-heart"></i>
                     Wishlist
                 </a>
@@ -180,4 +285,4 @@
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
-</html>
+</html> *@

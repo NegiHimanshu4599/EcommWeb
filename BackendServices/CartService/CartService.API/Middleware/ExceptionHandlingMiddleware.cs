@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using CartService.Application.Exceptions;
+using System.Net;
 using System.Text.Json;
 
 namespace CartService.API.Middleware
@@ -19,6 +20,11 @@ namespace CartService.API.Middleware
             {
                 await _next(context);
             }
+            catch (WishlistException ex)
+            {
+                _logger.LogWarning(ex.Message);
+                await HandleExceptionAsync(context,HttpStatusCode.Conflict,ex.Message);
+            }
             catch (KeyNotFoundException ex)
             {
                 _logger.LogWarning(ex.Message);
@@ -28,7 +34,7 @@ namespace CartService.API.Middleware
             {
                 _logger.LogWarning(ex.Message);
                 await HandleExceptionAsync(context, HttpStatusCode.Unauthorized, ex.Message);
-            }
+            }  
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Unhandled Exception");
@@ -37,14 +43,10 @@ namespace CartService.API.Middleware
                 await HandleExceptionAsync(context, HttpStatusCode.InternalServerError, ex.ToString());
             }
         }
-        private static async Task HandleExceptionAsync(
-            HttpContext context,
-            HttpStatusCode statusCode,
-            string message)
+        private static async Task HandleExceptionAsync(HttpContext context,HttpStatusCode statusCode,string message)
         {
             context.Response.ContentType = "application/json";
             context.Response.StatusCode = (int)statusCode;
-
             var response = new
             {
                 context.Response.StatusCode,
