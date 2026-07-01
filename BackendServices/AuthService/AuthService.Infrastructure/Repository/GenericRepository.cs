@@ -6,8 +6,7 @@ using System.Linq.Expressions;
 
 namespace AuthService.Infrastructure.Repository
 {
-    public class GenericRepository<TEntity, TKey> : IRepository<TEntity, TKey>
-        where TEntity : class
+    public class GenericRepository<TEntity, TKey> : IRepository<TEntity, TKey> where TEntity : class
     {
         protected readonly ApplicationDbContext _context;
         protected readonly DbSet<TEntity> _dbSet;

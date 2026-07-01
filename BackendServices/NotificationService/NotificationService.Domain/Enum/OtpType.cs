@@ -1,0 +1,17 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace NotificationService.Domain.Enum
+{
+    public enum OtpType
+    {
+        EmailVerification = 0,
+        PasswordReset = 1,
+        PhoneVerification = 2,
+        Login = 3,
+        TwoFactorAuthentication = 4
+    }
+}
