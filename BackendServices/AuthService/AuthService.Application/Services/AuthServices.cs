@@ -60,7 +60,7 @@ namespace AuthService.Application.Services
                 {
                     UserId = user.Id,
                     FullName = dto.UserName,
-                    PrimaryPhoneNumber = string.Empty,
+                    PrimaryPhoneNumber =string.Empty,
                     CreatedAt = DateTime.UtcNow,
                     UpdatedAt = DateTime.UtcNow
                 };
@@ -126,7 +126,6 @@ namespace AuthService.Application.Services
         public async Task LogoutAsync(LogoutDto dto)
         {
             ArgumentNullException.ThrowIfNull(dto);
-
             var hashedToken = _jwtTokenGenerator.HashRefreshToken(dto.RefreshToken);
             var storedToken =await _refreshTokenRepository.GetByTokenAsync(hashedToken);
             if (storedToken == null || storedToken.IsRevoked)
@@ -144,7 +143,6 @@ namespace AuthService.Application.Services
             catch(Exception ex)
             {
                 await transaction.RollbackAsync();
-
                 _logger.LogError(ex,"Logout failed for user {UserId}.",storedToken.UserId);
                 throw;
             }

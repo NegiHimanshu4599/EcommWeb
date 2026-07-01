@@ -39,7 +39,6 @@ namespace AuthService.Application.Services
                 }
                 else if (!existingAddresses.Any())
                 {
-                    // First address is always default
                     address.IsDefault = true;
                 }
                 await _addressRepository.AddAsync(address);

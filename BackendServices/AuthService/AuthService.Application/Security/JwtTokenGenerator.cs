@@ -32,7 +32,7 @@ namespace AuthService.Application.Security
                 new(ClaimTypes.NameIdentifier, user.Id),
                 new(ClaimTypes.Name, user.UserName ?? string.Empty),
                 new(ClaimTypes.Email, user.Email ?? string.Empty)
-        };
+            };
             foreach (var role in roles.Where(r => !string.IsNullOrWhiteSpace(r)).Distinct())
             {
                 claims.Add(new Claim(ClaimTypes.Role, role));
