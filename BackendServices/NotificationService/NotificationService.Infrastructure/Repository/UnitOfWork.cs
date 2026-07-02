@@ -1,4 +1,5 @@
-﻿using NotificationService.Domain.Interfaces;
+﻿using Microsoft.EntityFrameworkCore.Storage;
+using NotificationService.Domain.Interfaces;
 using NotificationService.Infrastructure.Data;
 using System;
 using System.Collections.Generic;
@@ -32,6 +33,10 @@ namespace NotificationService.Infrastructure.Repository
         public async Task SaveChangesAsync(CancellationToken cancellationToken)
         {
             await _context.SaveChangesAsync(cancellationToken);
+        }
+        public async Task<IDbContextTransaction> BeginTransactionAsync(CancellationToken cancellationToken)
+        {
+            return await _context.Database.BeginTransactionAsync(cancellationToken);
         }
     }
 }

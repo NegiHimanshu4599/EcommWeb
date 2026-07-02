@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore.Storage;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,5 +16,6 @@ namespace NotificationService.Domain.Interfaces
         public IOtpRepository OtpRepository { get; }
         Task SaveChangesAsync();
         Task SaveChangesAsync(CancellationToken cancellationToken);
+        Task<IDbContextTransaction> BeginTransactionAsync(CancellationToken cancellationToken);
     }
 }

@@ -43,13 +43,13 @@ namespace NotificationService.Application.Services
         {
             return RandomNumberGenerator.GetInt32(100000, 999999).ToString();
         }
-        private static Dictionary<string, string> BuildPlaceholders(string fullName, string otp)
+        private  Dictionary<string, string> BuildPlaceholders(string fullName, string otp)
         {
             return new Dictionary<string, string>
             {
                 { "FullName", fullName },
                 { "OTP", otp },
-                { "Minutes", "10" } // We'll replace with configured value later if needed
+                { "Minutes", _settings.ExpiryMinutes.ToString() }
             };
         }
         private async Task<OtpCode> CreateOtpAsync(GenerateOtpDto dto, string otp, CancellationToken cancellationToken = default)
@@ -120,16 +120,27 @@ namespace NotificationService.Application.Services
                 throw new ArgumentException("Recipient is required.", nameof(dto.Recipient));
             _logger.LogInformation("Generating OTP for '{Recipient}'.", dto.Recipient);
             // Deactivate any existing active OTPs for this recipient/type
-            await DeactivateExistingOtpAsync(dto.Recipient, dto.Type, cancellationToken);
-            var otp = GenerateOtpCode();
-            await CreateOtpAsync(dto, otp, cancellationToken);
-            await SendOtpAsync(dto.NotificationType, dto.Recipient, dto.FullName ?? "User", otp, cancellationToken);
-            _logger.LogInformation("OTP generated successfully for '{Recipient}'.", dto.Recipient);
-            return new OtpResultDto
+            using var transaction = await _unitOfWork.BeginTransactionAsync(cancellationToken);
+            try
             {
-                Success = true,
-                Message = "OTP generated successfully."
-            };
+                await DeactivateExistingOtpAsync(dto.Recipient, dto.Type, cancellationToken);
+                var otp = GenerateOtpCode();
+                await CreateOtpAsync(dto, otp, cancellationToken);
+                await _unitOfWork.SaveChangesAsync(cancellationToken); // this saves both changes
+                await transaction.CommitAsync(cancellationToken);
+                await SendOtpAsync(dto.NotificationType, dto.Recipient, dto.FullName ?? "User", otp, cancellationToken);
+                _logger.LogInformation("OTP generated successfully for '{Recipient}'.", dto.Recipient);
+                return new OtpResultDto
+                {
+                    Success = true,
+                    Message = "OTP generated successfully."
+                };
+            }
+            catch
+            {
+                await transaction.RollbackAsync(cancellationToken);
+                    throw;
+            }
         }
         public async Task<OtpResultDto> VerifyAsync(VerifyOtpDto dto, CancellationToken cancellationToken = default)
         {
@@ -191,47 +202,54 @@ namespace NotificationService.Application.Services
                 throw new ArgumentException("UserId is required.", nameof(dto.UserId));
             if (string.IsNullOrWhiteSpace(dto.Recipient))
                 throw new ArgumentException("Recipient is required.", nameof(dto.Recipient));
-            // Check if resend is allowed (cooldown)
-            var canResend = await CanResendAsync(dto.Recipient, dto.Type, cancellationToken);
-            if (!canResend)
+            using var transaction = await _unitOfWork.BeginTransactionAsync(cancellationToken);
+            try
             {
-                _logger.LogWarning("Resend requested too soon for '{Recipient}' ({Type}).", dto.Recipient, dto.Type);
+                // Check if resend is allowed (cooldown)
+                var canResend = await CanResendAsync(dto.Recipient, dto.Type, cancellationToken);
+                if (!canResend)
+                {
+                    _logger.LogWarning("Resend requested too soon for '{Recipient}' ({Type}).", dto.Recipient, dto.Type);
+                    return new OtpResultDto
+                    {
+                        Success = false,
+                        Message = $"Please wait {_settings.CooldownSeconds} seconds before requesting a new OTP."
+                    };
+                }
+                // Deactivate any existing active OTPs for this recipient/type
+                await DeactivateExistingOtpAsync(dto.Recipient, dto.Type, cancellationToken);
+                // Generate new OTP
+                var otp = GenerateOtpCode();
+                var entity = await CreateOtpAsync(new GenerateOtpDto
+                {
+                    UserId = dto.UserId,
+                    Recipient = dto.Recipient,
+                    FullName = dto.FullName,
+                    Type = dto.Type,
+                    NotificationType = dto.NotificationType
+                }, otp, cancellationToken);
+                // Send the OTP
+                await _unitOfWork.SaveChangesAsync(cancellationToken);
+                await transaction.CommitAsync(cancellationToken);
+                await SendOtpAsync(dto.NotificationType, dto.Recipient, dto.FullName ?? "User", otp, cancellationToken);
+                _logger.LogInformation("OTP resent successfully for '{Recipient}'.", dto.Recipient);
                 return new OtpResultDto
                 {
-                    Success = false,
-                    Message = $"Please wait {_settings.CooldownSeconds} seconds before requesting a new OTP."
+                    Success = true,
+                    Message = "OTP resent successfully."
                 };
             }
-            // Deactivate any existing active OTPs for this recipient/type
-            await DeactivateExistingOtpAsync(dto.Recipient, dto.Type, cancellationToken);
-            // Generate new OTP
-            var otp = GenerateOtpCode();
-            var entity = await CreateOtpAsync(new GenerateOtpDto
+            catch
             {
-                UserId = dto.UserId,
-                Recipient = dto.Recipient,
-                FullName = dto.FullName,
-                Type = dto.Type,
-                NotificationType = dto.NotificationType
-            }, otp, cancellationToken);
-            // Send the OTP
-            await SendOtpAsync(dto.NotificationType, dto.Recipient, dto.FullName ?? "User", otp, cancellationToken);
-            _logger.LogInformation("OTP resent successfully for '{Recipient}'.", dto.Recipient);
-            return new OtpResultDto
-            {
-                Success = true,
-                Message = "OTP resent successfully."
-            };
+                await transaction.RollbackAsync(cancellationToken);
+                throw;
+            }
         }
-        /// <summary>
-        /// Checks if a new OTP can be sent based on cooldown period.
-        /// </summary>
         private async Task<bool> CanResendAsync(string recipient, OtpType type, CancellationToken cancellationToken = default)
         {
-            var lastOtp = await _unitOfWork.OtpRepository.GetActiveOtpAsync(recipient, type, cancellationToken);
+            var lastOtp = await _unitOfWork.OtpRepository.GetLastOtpAsync(recipient, type, cancellationToken);
             if (lastOtp == null)
-                return true; // No existing OTP, so resend is allowed
-            // If the last OTP was created within the cooldown period, block resend
+                return true;
             var timeSinceCreation = DateTime.UtcNow - lastOtp.CreatedAt;
             return timeSinceCreation.TotalSeconds >= _settings.CooldownSeconds;
         }
@@ -258,6 +276,5 @@ namespace NotificationService.Application.Services
             }
             return count;
         }
-       
     }
 }

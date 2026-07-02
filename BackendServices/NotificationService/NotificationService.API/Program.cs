@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using NotificationService.Application.Interface.Background;
 using NotificationService.Application.Interface.Provider;
 using NotificationService.Application.Interface.Services;
 using NotificationService.Application.Mapping;
@@ -31,6 +32,8 @@ builder.Services.AddHostedService<ExpiredOtpCleanupService>();
 builder.Services.AddScoped<IOtpService, OtpService>();
 builder.Services.AddScoped<IEmailTemplateRenderer, EmailTemplateRenderer>();
 builder.Services.AddScoped<IVoiceCallSender, VoiceCallSender>();
+builder.Services.AddSingleton<INotificationQueue, NotificationQueue>();
+builder.Services.AddHostedService<NotificationBackgroundService>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

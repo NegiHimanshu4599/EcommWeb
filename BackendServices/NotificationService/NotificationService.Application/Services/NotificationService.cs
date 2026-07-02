@@ -1,15 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using Microsoft.Extensions.Logging;
 using NotificationService.Application.Dtos.Notification;
+using NotificationService.Application.Interface.Background;
 using NotificationService.Application.Interface.Provider;
 using NotificationService.Application.Interface.Services;
 using NotificationService.Domain.Entities;
 using NotificationService.Domain.Enum;
 using NotificationService.Domain.Interfaces;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace NotificationService.Application.Services
 {
@@ -21,10 +22,12 @@ namespace NotificationService.Application.Services
         private readonly IEmailSender _emailSender;
         private readonly ISmsSender _smsSender;
         private readonly IPushNotificationSender _pushSender;
+        private readonly INotificationQueue _notificationQueue;
 
-        public NotificationService(IUnitOfWork unitOfWork, IMapper mapper,ILogger<NotificationService> logger,IEmailSender emailSender, ISmsSender smsSender, IPushNotificationSender pushSender)
+        public NotificationService(IUnitOfWork unitOfWork, INotificationQueue notificationQueue,IMapper mapper,ILogger<NotificationService> logger,IEmailSender emailSender, ISmsSender smsSender, IPushNotificationSender pushSender)
         {
             _unitOfWork = unitOfWork;
+            _notificationQueue = notificationQueue;
             _mapper = mapper;
             _logger = logger;
             _emailSender = emailSender;
@@ -48,12 +51,12 @@ namespace NotificationService.Application.Services
             await _unitOfWork.NotificationRepository.AddAsync(notification);
             await _unitOfWork.SaveChangesAsync();
             // Process the notification asynchronously (or background) – for simplicity we do it inline.
-            await ProcessNotificationAsync(notification);
             // Reload with logs and template
             notification = await _unitOfWork.NotificationRepository.GetByIdAsync(notification.Id);
+            _notificationQueue.Enqueue(notification);
             return _mapper.Map<NotificationDto>(notification);
         }
-        private async Task ProcessNotificationAsync(Notification notification)
+        public async Task ProcessNotificationAsync(Notification notification)
         {
             try
             {
