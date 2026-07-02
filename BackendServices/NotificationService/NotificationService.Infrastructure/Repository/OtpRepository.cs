@@ -46,5 +46,12 @@ namespace NotificationService.Infrastructure.Repository
             _context.OtpCodes.Update(otp);
             return Task.CompletedTask;
         }
+        public async Task<OtpCode?> GetLastOtpAsync(string recipient, OtpType type, CancellationToken cancellationToken = default)
+        {
+            return await _context.OtpCodes
+                .Where(x => x.Recipient == recipient && x.Type == type)
+                .OrderByDescending(x => x.CreatedAt)
+                .FirstOrDefaultAsync(cancellationToken);
+        }
     }
 }
