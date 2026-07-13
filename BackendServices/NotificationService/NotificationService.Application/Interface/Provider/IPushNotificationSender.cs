@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using NotificationService.Application.Dtos.PushNotification;
 
 namespace NotificationService.Application.Interface.Provider
 {
     public interface IPushNotificationSender
     {
-        Task SendAsync(string deviceToken, string title, string body);
+        Task SendAsync(PushNotificationRequest request, CancellationToken cancellationToken = default);
+        Task SendMulticastAsync(MulticastPushNotificationRequest request, CancellationToken cancellationToken = default);
     }
 }

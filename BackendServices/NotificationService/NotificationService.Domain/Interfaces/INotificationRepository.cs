@@ -9,10 +9,10 @@ namespace NotificationService.Domain.Interfaces
 {
     public interface INotificationRepository
     {
-        Task<Notification?> GetByIdAsync(int id);
-        Task<IEnumerable<Notification>> GetAllAsync();
-        Task AddAsync(Notification notification);
-        Task UpdateAsync(Notification notification);
-        Task DeleteAsync(Notification notification);
+        Task<Notification?> GetByIdAsync(int id, CancellationToken cancellationToken = default);
+        Task<IEnumerable<Notification>> GetAllAsync( CancellationToken cancellationToken = default);
+        Task AddAsync(Notification notification, CancellationToken cancellationToken = default);
+        void  Update(Notification notification);
+        void Delete(Notification notification);
     }
 }

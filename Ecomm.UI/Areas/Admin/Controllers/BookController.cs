@@ -91,8 +91,7 @@ namespace Ecomm.UI.Areas.Admin.Controllers
             vm.Books = new UpsertBook();
             if (id == null || id == 0)
                 return View(vm);
-            var book = await _apiService.GetAsync<BookDetailDto>(
-                SD.BookAPIPath + "/" + id);
+            var book = await _apiService.GetAsync<BookDetailDto>(SD.BookAPIPath + "/" + id);
             vm.Books = new UpsertBook
             {
                 Id = book.Id,

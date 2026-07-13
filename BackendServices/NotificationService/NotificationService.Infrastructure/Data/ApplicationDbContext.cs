@@ -1,10 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using NotificationService.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace NotificationService.Infrastructure.Data
 {
@@ -21,7 +16,6 @@ namespace NotificationService.Infrastructure.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-
             // Notification and NotificationLog relationship
             modelBuilder.Entity<Notification>()
                 .HasMany(n => n.NotificationLogs)
@@ -49,23 +43,51 @@ namespace NotificationService.Infrastructure.Data
                 .HasMaxLength(1000);
             modelBuilder.Entity<Notification>()
                 .HasIndex(x => x.UserId);
-            modelBuilder.Entity<Notification>()
+            modelBuilder.Entity<Notification>()  
                 .HasIndex(x => x.Status);
             modelBuilder.Entity<Notification>()
                 .HasIndex(x => x.NotificationType);
             modelBuilder.Entity<Notification>()
+                .HasIndex(x => x.Priority);
+            modelBuilder.Entity<Notification>()
                 .HasIndex(x => x.CreatedAt);
+            modelBuilder.Entity<Notification>()
+                .Property(x => x.NotificationType)
+                .HasConversion<int>();
+            modelBuilder.Entity<Notification>()
+                .Property(x => x.Status)
+                .HasConversion<int>();
+            modelBuilder.Entity<Notification>()
+                .Property(x => x.Priority)
+                .HasConversion<int>();
+            modelBuilder.Entity<Notification>()
+                .Property(x => x.RequestId) 
+                .IsRequired()  
+                .HasMaxLength(100);
+            modelBuilder.Entity<Notification>()
+                .HasIndex(x => x.RequestId)
+                .IsUnique();
             modelBuilder.Entity<NotificationLog>()
                 .Property(x => x.Provider) 
                 .HasMaxLength(100)  
                 .IsRequired();
+            modelBuilder.Entity<Notification>()
+                .HasIndex(x => new               
+                {       
+                    x.Status, 
+                    x.Priority,
+                    x.CreatedAt
+                });
             modelBuilder.Entity<NotificationLog>()
                 .Property(x => x.Response)
                 .HasMaxLength(4000);
             modelBuilder.Entity<NotificationLog>()
                 .HasIndex(x => x.NotificationId);
             modelBuilder.Entity<NotificationLog>()
-                .HasIndex(x => x.Status);
+                .HasIndex(x => x.Status); 
+            modelBuilder.Entity<NotificationLog>()
+                .Property(x => x.Status)
+                .HasConversion<int>();
 
             // DeviceToken indexes
             modelBuilder.Entity<DeviceToken>()
@@ -81,6 +103,12 @@ namespace NotificationService.Infrastructure.Data
             modelBuilder.Entity<DeviceToken>()
                 .HasIndex(x => x.Token)
                 .IsUnique();
+            modelBuilder.Entity<DeviceToken>()
+                .Property(x => x.DeviceId)
+                .IsRequired()
+                .HasMaxLength(200);
+            modelBuilder.Entity<DeviceToken>()
+                .HasIndex(x => x.DeviceId);
 
             // EmailTemplate indexes and constraints
             modelBuilder.Entity<EmailTemplate>()
@@ -95,8 +123,13 @@ namespace NotificationService.Infrastructure.Data
                 .Property(x => x.HtmlBody)
                 .IsRequired();
             modelBuilder.Entity<EmailTemplate>()
+                .Property(x => x.Description) 
+                .HasMaxLength(500);
+            modelBuilder.Entity<EmailTemplate>()
                 .HasIndex(x => x.Name)
                 .IsUnique();
+            modelBuilder.Entity<EmailTemplate>()
+                .HasIndex(x => x.IsActive);
 
             // OTP
             modelBuilder.Entity<OtpCode>()
@@ -121,6 +154,12 @@ namespace NotificationService.Infrastructure.Data
                 .HasIndex(x => x.IsUsed);
             modelBuilder.Entity<OtpCode>()
                 .HasIndex(x => x.ExpiryTime);
+            modelBuilder.Entity<OtpCode>()
+                .Property(x => x.Type)
+                .HasConversion<int>();
+            modelBuilder.Entity<OtpCode>()
+                .Property(x => x.AttemptCount)
+                .HasDefaultValue(0);
             modelBuilder.Entity<OtpCode>()
                 .HasIndex(x => new
                 {

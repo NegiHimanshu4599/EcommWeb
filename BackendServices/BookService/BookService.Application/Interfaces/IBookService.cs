@@ -1,4 +1,5 @@
 ﻿using BookService.Application.DTOs;
+
 namespace BookService.Application.Interfaces
 {
     public interface IBookService

@@ -1,11 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore.Storage;
 using NotificationService.Domain.Interfaces;
 using NotificationService.Infrastructure.Data;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace NotificationService.Infrastructure.Repository
 {
@@ -26,15 +21,11 @@ namespace NotificationService.Infrastructure.Repository
         public INotificationLogRepository NotificationLogRepository { private set; get; }
         public IDeviceTokenRepository DeviceTokenRepository { private set; get; }
         public IEmailTemplateRepository EmailTemplateRepository { private set; get; }
-        public async Task SaveChangesAsync()
-        {
-            await _context.SaveChangesAsync();
-        }
-        public async Task SaveChangesAsync(CancellationToken cancellationToken)
+        public async Task SaveChangesAsync(CancellationToken cancellationToken=default)
         {
             await _context.SaveChangesAsync(cancellationToken);
         }
-        public async Task<IDbContextTransaction> BeginTransactionAsync(CancellationToken cancellationToken)
+        public async Task<IDbContextTransaction> BeginTransactionAsync(CancellationToken cancellationToken=default)
         {
             return await _context.Database.BeginTransactionAsync(cancellationToken);
         }

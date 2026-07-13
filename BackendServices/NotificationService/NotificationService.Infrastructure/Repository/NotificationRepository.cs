@@ -2,11 +2,6 @@
 using NotificationService.Domain.Entities;
 using NotificationService.Domain.Interfaces;
 using NotificationService.Infrastructure.Data;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace NotificationService.Infrastructure.Repository
 {
@@ -17,27 +12,25 @@ namespace NotificationService.Infrastructure.Repository
         {
             _context = context;
         }
-        public async Task AddAsync(Notification notification)
+        public async Task AddAsync(Notification notification, CancellationToken cancellationToken = default)
         {
-            await _context.Notifications.AddAsync(notification);
+            await _context.Notifications.AddAsync(notification,cancellationToken);
         }
-        public Task DeleteAsync(Notification notification)
+        public void Delete(Notification notification)
         {
             _context.Notifications.Remove(notification);
-            return Task.CompletedTask;
         }
-        public async Task<IEnumerable<Notification>> GetAllAsync()
+        public async Task<IEnumerable<Notification>> GetAllAsync(CancellationToken cancellationToken = default)
         {
-            return await _context.Notifications.AsNoTracking().Include(x => x.NotificationLogs).Include(x => x.EmailTemplate).ToListAsync();
+            return await _context.Notifications.AsNoTracking().Include(x => x.NotificationLogs).Include(x => x.EmailTemplate).ToListAsync(cancellationToken);
         }
-        public async Task<Notification?> GetByIdAsync(int id)
+        public async Task<Notification?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
         {
-            return await _context.Notifications.AsNoTracking().Include(x => x.NotificationLogs).Include(x => x.EmailTemplate).FirstOrDefaultAsync(x => x.Id == id);
+            return await _context.Notifications.Include(x => x.NotificationLogs).Include(x => x.EmailTemplate).FirstOrDefaultAsync(x => x.Id == id,cancellationToken);
         }
-        public Task UpdateAsync(Notification notification)
+        public void Update(Notification notification)
         {
             _context.Notifications.Update(notification);
-            return Task.CompletedTask;
         }
     }
 }

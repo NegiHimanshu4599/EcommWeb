@@ -1,9 +1,4 @@
 ﻿using NotificationService.Domain.Enum;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace NotificationService.Application.Dtos.Otp
 {
@@ -15,6 +10,7 @@ namespace NotificationService.Application.Dtos.Otp
         public OtpType Type { get; set; }
         public bool IsUsed { get; set; }
         public DateTime CreatedAt { get; set; }
+        public int AttemptCount { get; set; }
         public DateTime ExpiryTime { get; set; }
         public DateTime? VerifiedAt { get; set; }
     }

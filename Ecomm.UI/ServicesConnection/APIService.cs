@@ -11,8 +11,7 @@ namespace Ecomm.UI.ServicesConnection
     {
         private readonly IHttpClientFactory _clientFactory;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        public APIService(IHttpClientFactory clientFactory,
-                          IHttpContextAccessor httpContextAccessor)
+        public APIService(IHttpClientFactory clientFactory, IHttpContextAccessor httpContextAccessor)
         {
             _clientFactory = clientFactory;
             _httpContextAccessor = httpContextAccessor;
@@ -54,8 +53,6 @@ namespace Ecomm.UI.ServicesConnection
             var response = await client.PostAsync(url, content);
             if (!response.IsSuccessStatusCode)
                 throw new Exception(await response.Content.ReadAsStringAsync());
-            //var error = await response.Content.ReadAsStringAsync();
-            //throw new Exception($"API ERROR: {response.StatusCode} - {error}");
             var result = await response.Content.ReadAsStringAsync();
             if (string.IsNullOrWhiteSpace(result))
                 return default;
@@ -173,8 +170,7 @@ namespace Ecomm.UI.ServicesConnection
                 RefreshToken = refreshToken
             });
             var content = new StringContent( body,Encoding.UTF8, "application/json");
-            var response = await client.PostAsync(
-                SD.AuthAPIPath + "/refresh",content);
+            var response = await client.PostAsync(SD.AuthAPIPath + "/refresh",content);
             if (!response.IsSuccessStatusCode)
                 return;
             var json = await response.Content.ReadAsStringAsync();

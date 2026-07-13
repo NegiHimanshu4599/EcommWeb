@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace NotificationService.Application.Dtos.EmailTemplate
+﻿namespace NotificationService.Application.Dtos.EmailTemplate
 {
     public class EmailTemplateDto
     {
@@ -13,5 +7,6 @@ namespace NotificationService.Application.Dtos.EmailTemplate
         public string Subject { get; set; } = null!;
         public string HtmlBody { get; set; } = null!;
         public bool IsActive { get; set; }
+        public string Description { get; set; } = string.Empty;
     }
 }

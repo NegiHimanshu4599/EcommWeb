@@ -216,19 +216,14 @@
 
 
 
- ==========================================
-   PAGE
-========================================== 
-
+ 
 .cart-page {
     width: 96%;
     max-width: 1500px;
     margin: 35px auto 50px;
 }
 
- ==========================================
-   BREADCRUMB
-========================================== 
+
 
 .breadcrumb-area {
     display: flex;
@@ -246,10 +241,6 @@
         .breadcrumb-area a:hover {
             color: #980d35;
         }
-
- ==========================================
-   HEADER
-========================================== 
 
 .cart-header {
     display: flex;
@@ -285,11 +276,6 @@
         background: #980d35;
         color: white;
     }
-
- ==========================================
-   ALERTS
-========================================== 
-
 .success-alert {
     background: #f3fcf5;
     border: 1px solid #7fd89a;
@@ -308,10 +294,6 @@
     margin-bottom: 25px;
 }
 
- ==========================================
-   MAIN GRID
-========================================== 
-
 .cart-container {
     display: grid;
     grid-template-columns: minmax(0,1fr) 380px;
@@ -319,20 +301,12 @@
     align-items: start;
 }
 
- ==========================================
-   LEFT PANEL
-========================================== 
-
 .cart-left {
     background: white;
     border-radius: 16px;
     border: 1px solid #ececec;
     overflow: hidden;
 }
-
- ==========================================
-   TABLE HEADER
-========================================== 
 
 .cart-table-header {
     display: grid;
@@ -345,10 +319,6 @@
     color: #666;
     text-transform: uppercase;
 }
-
- ==========================================
-   ITEM
-========================================== 
 
 .cart-item {
     display: grid;
@@ -386,18 +356,10 @@
     font-weight: 500;
 }
 
- ==========================================
-   PRICE
-========================================== 
-
 .price-cell {
     font-size: 18px;
     font-weight: 600;
 }
-
- ==========================================
-   QUANTITY
-========================================== 
 
 .cart-qty {
     display: flex;
@@ -438,19 +400,11 @@
     font-weight: 700;
 }
 
- ==========================================
-   TOTAL
-========================================== 
-
 .cart-total {
     font-size: 20px;
     font-weight: 700;
     color: #980d35;
 }
-
- ==========================================
-   DELETE
-========================================== 
 
 .delete-btn {
     color: #ef4444;
@@ -461,10 +415,6 @@
     .delete-btn:hover {
         color: #dc2626;
     }
-
- ==========================================
-   FOOTER
-========================================== 
 
 .cart-footer {
     display: flex;
@@ -497,10 +447,6 @@
         font-size: 32px;
         color: #980d35;
     }
-
- ==========================================
-   SUMMARY
-========================================== 
 
 .cart-right {
     position: sticky;
@@ -536,10 +482,6 @@
     margin: 25px 0;
 }
 
- ==========================================
-   GRAND TOTAL
-========================================== 
-
 .grand-total {
     display: flex;
     justify-content: space-between;
@@ -548,10 +490,6 @@
     font-weight: 700;
     color: #980d35;
 }
-
- ==========================================
-   CHECKOUT
-========================================== 
 
 .checkout-btn {
     display: block;
@@ -565,10 +503,6 @@
     font-size: 18px;
     font-weight: 700;
 }
-
- ==========================================
-   BENEFITS
-========================================== 
 
 .cart-benefits {
     margin-top: 30px;
@@ -602,10 +536,6 @@
         margin: 0;
     }
 
- ==========================================
-   EMPTY CART
-========================================== 
-
 .empty-cart {
     background: white;
     border-radius: 16px;
@@ -631,10 +561,6 @@
     padding: 15px 35px;
     border-radius: 10px;
 }
-
- ==========================================
-   RESPONSIVE
-========================================== 
 
 @media(max-width:1200px) {
 
@@ -672,18 +598,7 @@
         grid-template-columns: 1fr 1fr;
     }
 }
-/*.custom-navbar {
-    height: 90px;
-    background: white;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 70px;
-    border-bottom: 1px solid #eee;
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-}*/
+
 .custom-navbar {
     height: 80px;
     background: white;
@@ -743,7 +658,6 @@
     gap: 18px;
 }
 
-/* SEARCH */
 .search-box {
     display: flex;
     align-items: center;
@@ -789,3 +703,4 @@
 
 .dropdown-toggle::after {
     margin-left: 8px;
+}

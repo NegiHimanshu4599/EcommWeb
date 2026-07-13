@@ -17,31 +17,29 @@ namespace NotificationService.Infrastructure.Repository
         {
             _context = context;
         }
-        public async Task AddAsync(EmailTemplate emailTemplate)
+        public async Task AddAsync(EmailTemplate emailTemplate, CancellationToken cancellationToken = default)
         {
-            await _context.EmailTemplates.AddAsync(emailTemplate);
+            await _context.EmailTemplates.AddAsync(emailTemplate, cancellationToken);
         }
-        public Task DeleteAsync(EmailTemplate emailTemplate)
+        public void Delete(EmailTemplate emailTemplate)
         {
             _context.EmailTemplates.Remove(emailTemplate);
-            return Task.CompletedTask;
         }
-        public async Task<IEnumerable<EmailTemplate>> GetAllAsync()
+        public async Task<IEnumerable<EmailTemplate>> GetAllAsync(CancellationToken cancellationToken = default)
         {
-            return await _context.EmailTemplates.AsNoTracking().ToListAsync();
+            return await _context.EmailTemplates.AsNoTracking().ToListAsync(cancellationToken);
         }
-        public async Task<EmailTemplate?> GetByIdAsync(int id)
+        public async Task<EmailTemplate?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
         {
-            return await _context.EmailTemplates.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
+            return await _context.EmailTemplates.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id,cancellationToken);
         }
-        public async Task<EmailTemplate?> GetByNameAsync(string name)
+        public async Task<EmailTemplate?> GetByNameAsync(string name, CancellationToken cancellationToken = default)
         {
-            return await _context.EmailTemplates.AsNoTracking().FirstOrDefaultAsync(x => x.Name == name);
+            return await _context.EmailTemplates.AsNoTracking().FirstOrDefaultAsync(x => x.Name == name,cancellationToken);
         }
-        public Task UpdateAsync(EmailTemplate emailTemplate)
+        public void Update(EmailTemplate emailTemplate)
         {
             _context.EmailTemplates.Update(emailTemplate);
-                        return Task.CompletedTask;
         }
     }
 }

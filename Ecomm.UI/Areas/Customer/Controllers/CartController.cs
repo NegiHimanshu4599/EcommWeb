@@ -1,10 +1,8 @@
 ﻿using Ecomm.UI.Common;
 using Ecomm.UI.Models.CartDto;
-using Ecomm.UI.Models.ViewModels;
 using Ecomm.UI.ServicesConnection;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
 
 namespace Ecomm.UI.Areas.Customer.Controllers
 {

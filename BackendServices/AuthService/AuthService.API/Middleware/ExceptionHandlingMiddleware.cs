@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using FluentValidation;
+using System.Net;
 using System.Text.Json;
 
 namespace AuthService.API.Middleware
@@ -27,6 +28,11 @@ namespace AuthService.API.Middleware
             {
                 _logger.LogWarning(ex.Message);
                 await HandleExceptionAsync(context, HttpStatusCode.Unauthorized, ex.Message);
+            }
+            catch (ValidationException ex)
+            {
+                _logger.LogWarning(ex.Message);
+                await HandleExceptionAsync(context, HttpStatusCode.BadRequest, ex.Message);
             }
             catch (Exception ex)
             {

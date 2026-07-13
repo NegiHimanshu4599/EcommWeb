@@ -1,7 +1,6 @@
 ﻿using Ecomm.UI.Common;
 using Ecomm.UI.Models.WishlistDto;
 using Ecomm.UI.ServicesConnection;
-using Humanizer;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Ecomm.UI.Areas.Customer.Controllers

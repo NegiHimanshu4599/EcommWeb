@@ -1,6 +1,6 @@
 ﻿using AuthService.Application.Interfaces;
-using AuthService.Application.Options;
 using AuthService.Domain.Entities;
+using AuthService.Infrastructure.Configuration;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -14,7 +14,6 @@ namespace AuthService.Application.Security
     {
         private readonly JwtOptions _jwtOptions;
         private static readonly JwtSecurityTokenHandler TokenHandler = new();
-
         public JwtTokenGenerator(IOptions<JwtOptions> jwtOptions)
         {
             _jwtOptions = jwtOptions.Value;

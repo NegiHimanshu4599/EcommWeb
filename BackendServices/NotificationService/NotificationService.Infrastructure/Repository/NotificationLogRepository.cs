@@ -2,11 +2,6 @@
 using NotificationService.Domain.Entities;
 using NotificationService.Domain.Interfaces;
 using NotificationService.Infrastructure.Data;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace NotificationService.Infrastructure.Repository
 {
@@ -17,17 +12,17 @@ namespace NotificationService.Infrastructure.Repository
         {
             _context = context;
         }
-        public async Task AddAsync(NotificationLog notificationLog)
+        public async Task AddAsync(NotificationLog notificationLog, CancellationToken cancellationToken = default)
         {
-            await _context.NotificationLogs.AddAsync(notificationLog);
+            await _context.NotificationLogs.AddAsync(notificationLog,cancellationToken);
         }
-        public async Task<NotificationLog?> GetByIdAsync(int id)
+        public async Task<NotificationLog?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
         {
-            return await _context.NotificationLogs.AsNoTracking().FirstOrDefaultAsync(x=>x.Id ==id);
+            return await _context.NotificationLogs.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id,cancellationToken);
         }
-        public async Task<IEnumerable<NotificationLog>> GetByNotificationIdAsync(int notificationId)
+        public async Task<IEnumerable<NotificationLog>> GetByNotificationIdAsync(int notificationId, CancellationToken cancellationToken = default)
         {
-            return await _context.NotificationLogs.AsNoTracking().Where(x => x.NotificationId == notificationId).ToListAsync();
+            return await _context.NotificationLogs.AsNoTracking().Where(x => x.NotificationId == notificationId).ToListAsync(cancellationToken);
         }
     }
 }

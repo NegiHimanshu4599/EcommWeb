@@ -17,31 +17,29 @@ namespace NotificationService.Infrastructure.Repository
         {
             _context = context;
         }
-        public async Task AddAsync(DeviceToken deviceToken)
+        public async Task AddAsync(DeviceToken deviceToken, CancellationToken cancellationToken = default)
         {
-            await _context.DeviceTokens.AddAsync(deviceToken);
+            await _context.DeviceTokens.AddAsync(deviceToken, cancellationToken);
         }
-        public Task DeleteAsync(DeviceToken deviceToken)
+        public void Delete(DeviceToken deviceToken)
         {
             _context.DeviceTokens.Remove(deviceToken);
-            return Task.CompletedTask;
         }
-        public async Task<DeviceToken?> GetByTokenAsync(string token)
+        public async Task<DeviceToken?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
         {
-            return await _context.DeviceTokens.FirstOrDefaultAsync(x => x.Token == token);
+            return await _context.DeviceTokens.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id , cancellationToken);
         }
-        public async Task<IEnumerable<DeviceToken>> GetByUserIdAsync(string userId)
+        public async Task<DeviceToken?> GetByTokenAsync(string token, CancellationToken cancellationToken = default)
         {
-           return await _context.DeviceTokens.AsNoTracking().Where(x => x.UserId == userId && x.IsActive).ToListAsync();
+            return await _context.DeviceTokens.AsNoTracking().FirstOrDefaultAsync(x => x.Token == token,cancellationToken);
         }
-        public  Task UpdateAsync(DeviceToken deviceToken)
+        public async Task<IEnumerable<DeviceToken>> GetByUserIdAsync(string userId, CancellationToken cancellationToken = default)
         {
-             _context.DeviceTokens.Update(deviceToken);
-            return  Task.CompletedTask;
+            return await _context.DeviceTokens.AsNoTracking().Where(x => x.UserId == userId && x.IsActive ).ToListAsync(cancellationToken);
         }
-        public async Task<DeviceToken?> GetByIdAsync(int id)
+        public void Update(DeviceToken deviceToken)
         {
-            return await _context.DeviceTokens.FirstOrDefaultAsync(x => x.Id == id);
+           _context.DeviceTokens.Update(deviceToken);
         }
     }
 }
