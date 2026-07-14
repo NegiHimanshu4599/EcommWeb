@@ -1,4 +1,4 @@
-﻿  using Ecomm.UI.Common;
+﻿using Ecomm.UI.Common;
 using Ecomm.UI.Models.AuthDtos;
 using Ecomm.UI.ServicesConnection;
 using Microsoft.AspNetCore.Authentication;

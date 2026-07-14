@@ -12,7 +12,6 @@ namespace AuthService.Domain.Entities
         public int Id { get; set; }
         public string UserId { get; set; } = null!;
         public AddressType AddressType { get; set; }
-        // Delivery contact for this address
         public string? ContactPhoneNumber { get; set; }
         public string AddressLine1 { get; set; } = null!;
         public string? AddressLine2 { get; set; }

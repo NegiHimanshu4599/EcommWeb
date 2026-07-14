@@ -1,14 +1,7 @@
 ﻿using AuthService.Application.DTOs;
 using AuthService.Application.Interfaces;
-using AuthService.Domain.Entities;
 using AuthService.Domain.Interface;
 using AutoMapper;
-using Microsoft.AspNetCore.Identity;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AuthService.Application.Services
 {

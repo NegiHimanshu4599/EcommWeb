@@ -131,6 +131,5 @@ namespace Ecomm.UI.Areas.Admin.Controllers
             TempData["SuccessMessage"] ="Category restored successfully";
             return RedirectToAction(nameof(PermanentDelete));
         }
-        //private async Task GetUserId(HttpClient )
     }
 }

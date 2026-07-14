@@ -1,9 +1,4 @@
 ﻿using NotificationService.Domain.Enum;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace NotificationService.Domain.Entities
 {
@@ -16,5 +11,6 @@ namespace NotificationService.Domain.Entities
         public string? Response { get; set; }
         public NotificationStatus Status { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime? UpdatedAt { get; set; }
     }
 }

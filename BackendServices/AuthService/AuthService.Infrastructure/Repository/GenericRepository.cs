@@ -27,6 +27,7 @@ namespace AuthService.Infrastructure.Repository
             await _dbSet.AddRangeAsync(entities);
         }
         #endregion
+
         #region Read
         public async Task<TEntity?> GetAsync(TKey id)
         {
@@ -73,6 +74,7 @@ namespace AuthService.Infrastructure.Repository
             return await _dbSet.CountAsync(filter);
         }
         #endregion
+
         #region Update
         public void Update(TEntity entity)
         {
@@ -85,6 +87,7 @@ namespace AuthService.Infrastructure.Repository
             _dbSet.UpdateRange(entities);
         }
         #endregion
+
         #region Delete
         public void Remove(TEntity entity)
         {
@@ -97,12 +100,14 @@ namespace AuthService.Infrastructure.Repository
             _dbSet.RemoveRange(entities);
         }
         #endregion
+
         #region Save
         public async Task<int> SaveAsync()
         {
             return await _context.SaveChangesAsync();
         }
         #endregion
+
         #region Transaction
         public async Task<IDbContextTransaction> BeginTransactionAsync()
         {

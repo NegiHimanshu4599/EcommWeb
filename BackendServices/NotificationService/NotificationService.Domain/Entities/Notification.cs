@@ -1,9 +1,4 @@
 ﻿using NotificationService.Domain.Enum;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace NotificationService.Domain.Entities
 {
@@ -20,9 +15,11 @@ namespace NotificationService.Domain.Entities
         public int RetryCount { get; set; }
         public string? ErrorMessage { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime? UpdatedAt { get; set; }
         public DateTime? SentAt { get; set; }
         public int? EmailTemplateId { get; set; }
         public EmailTemplate? EmailTemplate { get; set; }
+        public string RequestId { get; set; } = Guid.NewGuid().ToString("N");
         public ICollection<NotificationLog> NotificationLogs { get; set; }  = new List<NotificationLog>();
     }
 }

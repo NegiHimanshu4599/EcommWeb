@@ -5,10 +5,8 @@
         //Roles
         public const string Role_Admin = "Admin";
         public const string Role_Individual = "Individual";
-
         // Sessions
         public const string Ss_CartSessionCount = "Cart Count Session";
-
         //API Paths
         public static string AuthBaseUrl { get; set; }
         public static string BookBaseUrl { get; set; }

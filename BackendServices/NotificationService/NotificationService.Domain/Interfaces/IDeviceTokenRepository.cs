@@ -9,11 +9,11 @@ namespace NotificationService.Domain.Interfaces
 {
     public interface IDeviceTokenRepository
     {
-        Task<DeviceToken?> GetByIdAsync(int id);
-        Task<DeviceToken?> GetByTokenAsync(string token);
-        Task<IEnumerable<DeviceToken>> GetByUserIdAsync(string userId);
-        Task AddAsync(DeviceToken deviceToken);
-        Task UpdateAsync(DeviceToken deviceToken);
-        Task DeleteAsync(DeviceToken deviceToken);
+        Task<DeviceToken?> GetByIdAsync(int id ,CancellationToken cancellationToken=default);
+        Task<DeviceToken?> GetByTokenAsync(string token, CancellationToken cancellationToken = default);
+        Task<IEnumerable<DeviceToken>> GetByUserIdAsync(string userId, CancellationToken cancellationToken = default);
+        Task AddAsync(DeviceToken deviceToken, CancellationToken cancellationToken = default);
+        void Update(DeviceToken deviceToken);
+        void Delete(DeviceToken deviceToken);
     }
 }

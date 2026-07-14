@@ -14,8 +14,7 @@ namespace NotificationService.Domain.Interfaces
         public IDeviceTokenRepository DeviceTokenRepository { get; }
         public IEmailTemplateRepository EmailTemplateRepository { get; }
         public IOtpRepository OtpRepository { get; }
-        Task SaveChangesAsync();
-        Task SaveChangesAsync(CancellationToken cancellationToken);
-        Task<IDbContextTransaction> BeginTransactionAsync(CancellationToken cancellationToken);
+        Task SaveChangesAsync(CancellationToken cancellationToken =default);
+        Task<IDbContextTransaction> BeginTransactionAsync(CancellationToken cancellationToken=default);
     }
 }

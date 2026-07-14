@@ -1,8 +1,8 @@
-﻿namespace AuthService.Application.DTOs
-{
-    public class UserProfileDto
+﻿    namespace AuthService.Application.DTOs
     {
-        public string FullName { get; set; } = null!;
-        public string PrimaryPhoneNumber { get; set; } = null!;
+        public class UserProfileDto
+        {
+            public string FullName { get; set; } = null!;
+            public string PrimaryPhoneNumber { get; set; } = null!;
+        }
     }
-}

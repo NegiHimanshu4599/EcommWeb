@@ -49,35 +49,6 @@ namespace CartService.API.Controllers
                 });
             }
         }
-        //[HttpPost("add/{bookId}")]
-        //public async Task<IActionResult> Add(int bookId)
-        //{
-        //    try
-        //    {
-        //        var userId = GetUserId();
-        //        await _wishlistService.AddAsync(userId, bookId);
-        //        return Ok(new
-        //        {
-        //            success = true,
-        //            message = "Book added to wishlist"
-        //        });
-        //    }
-        //    catch (WishlistException ex)
-        //    {
-        //        return BadRequest(new
-        //        {
-        //            success = false,
-        //            message = ex.Message
-        //        });
-        //    }
-        //}
-        //[HttpPost("add/{bookId}")]
-        //public async Task<IActionResult> Add(int bookId)
-        //{
-        //    var userId = GetUserId();
-        //    await _wishlistService.AddAsync(userId, bookId);
-        //    return NoContent();
-        //}
         [HttpGet]
         public async Task<IActionResult> Get()
         {

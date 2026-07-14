@@ -1,14 +1,14 @@
-﻿using AuthService.Application.DTOs;
+﻿using Asp.Versioning;
+using AuthService.Application.DTOs;
 using AuthService.Application.Interfaces;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
-using System.Threading.Tasks;
 
 namespace AuthService.API.Controllers
 {
-    [Route("api/[controller]")]
+    [ApiVersion("1.0")]
+    [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
     [Authorize]
     public class AddressController : ControllerBase
@@ -30,8 +30,6 @@ namespace AuthService.API.Controllers
         [HttpPost]
         public async Task<IActionResult> SaveAddressAsync([FromBody] CreateAddressDto dto)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
             var user = GetUserId();
             var created = await _addressService.SaveAddress(user, dto);
             return CreatedAtAction(nameof(GetAllAddressesAsync), new { id = created.Id }, created);
@@ -39,8 +37,6 @@ namespace AuthService.API.Controllers
         [HttpPut]
         public async Task<IActionResult> UpdateAddress([FromBody]UpdateAddressDto dto)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
             var user = GetUserId();
             await _addressService.UpdateAddress(user, dto);
             return NoContent();

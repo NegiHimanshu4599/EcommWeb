@@ -18,14 +18,15 @@ namespace AuthService.Application.Mappings
                 .ForMember(d => d.Email, o => o.MapFrom(s => s.Email))
                 .ForAllMembers(o => o.Condition((src, dest, value) => value != null));
             CreateMap<ApplicationUser, LoginResponseDto>()
-                .ForMember(d => d.Email,o => o.MapFrom(s => s.Email))
-                .ForMember(d => d.Name,o => o.MapFrom(s => s.UserProfile != null? s.UserProfile.FullName: s.UserName))
-                .ForMember(d => d.AccessToken,o => o.Ignore()).
-                ForMember(d => d.RefreshToken,o => o.Ignore())
+                .ForMember(d => d.Email, o => o.MapFrom(s => s.Email))
+                .ForMember(d => d.Name, o => o.MapFrom(s => s.UserProfile != null ? s.UserProfile.FullName : s.UserName))
+                .ForMember(d => d.AccessToken, o => o.Ignore())
+                .ForMember(d => d.RefreshToken,o => o.Ignore())
                 .ForMember(d => d.Role,o => o.Ignore())
                 .ForMember(d => d.AccessTokenExpiry,o => o.Ignore())
                 .ForMember(d => d.IsProfileComplete, o => o.Ignore());
             #endregion
+
             #region Address
             CreateMap<CreateAddressDto, Address>()
                 .ForMember(d => d.Id, o => o.Ignore())
@@ -41,6 +42,7 @@ namespace AuthService.Application.Mappings
                 .ForMember(d => d.UpdatedAt, o => o.Ignore());
             CreateMap<Address, AddressDto>();
             #endregion
+
             #region UserProfile
             CreateMap<UpdateUserProfileDto, UserProfile>()
                 .ForMember(d => d.UserId, o => o.Ignore())

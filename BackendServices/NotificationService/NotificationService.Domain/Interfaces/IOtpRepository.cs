@@ -11,8 +11,8 @@ namespace NotificationService.Domain.Interfaces
         Task<IEnumerable<OtpCode>> GetUserOtpsAsync(string userId, CancellationToken cancellationToken = default);
         Task<IEnumerable<OtpCode>> GetExpiredOtpsAsync(CancellationToken cancellationToken = default);
         Task AddAsync(OtpCode otp, CancellationToken cancellationToken = default);
-        Task UpdateAsync(OtpCode otp, CancellationToken cancellationToken = default);
-        Task DeleteAsync(OtpCode otp, CancellationToken cancellationToken = default); 
+        void Update(OtpCode otp);
+        void Delete(OtpCode otp); 
         Task<OtpCode?> GetLastOtpAsync(string recipient, OtpType type, CancellationToken cancellationToken = default);
     }
 }

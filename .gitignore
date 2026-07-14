@@ -8,4 +8,5 @@ obj/
 .env
 appsettings.json
 **/Properties/launchSettings.json
-
+NotificationService.API/Firebase/firebase-adminsdk.json
+BackendServices/NotificationService/NotificationService.API/FireBase/firebase-adminsdk.json

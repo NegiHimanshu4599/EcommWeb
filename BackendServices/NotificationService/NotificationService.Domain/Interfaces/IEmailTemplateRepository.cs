@@ -9,11 +9,11 @@ namespace NotificationService.Domain.Interfaces
 {
     public interface IEmailTemplateRepository
     {
-        Task<EmailTemplate?> GetByIdAsync(int id);
-        Task<EmailTemplate?> GetByNameAsync(string name);
-        Task<IEnumerable<EmailTemplate>> GetAllAsync();
-        Task AddAsync(EmailTemplate emailTemplate);
-        Task UpdateAsync(EmailTemplate emailTemplate);
-        Task DeleteAsync(EmailTemplate emailTemplate);
+        Task<EmailTemplate?> GetByIdAsync(int id, CancellationToken cancellationToken = default);
+        Task<EmailTemplate?> GetByNameAsync(string name, CancellationToken cancellationToken = default);
+        Task<IEnumerable<EmailTemplate>> GetAllAsync( CancellationToken cancellationToken = default);
+        Task AddAsync(EmailTemplate emailTemplate, CancellationToken cancellationToken = default);
+        void Update(EmailTemplate emailTemplate);
+        void Delete(EmailTemplate emailTemplate);
     }
 }

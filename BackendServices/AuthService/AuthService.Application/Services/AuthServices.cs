@@ -1,9 +1,9 @@
 ﻿using AuthService.Application.DTOs;
 using AuthService.Application.Interfaces;
-using AuthService.Application.Options;
 using AuthService.Domain.CommonFunctions;
 using AuthService.Domain.Entities;
 using AuthService.Domain.Interface;
+using AuthService.Infrastructure.Configuration;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -22,10 +22,8 @@ namespace AuthService.Application.Services
         private readonly JwtOptions _jwtOptions;
         private readonly IMapper _mapper;
         private readonly ILogger<AuthService> _logger;
-        public AuthService(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager,
-            IRefreshTokenRepository refreshTokenRepository,IUserProfileRepository userProfileRepository,
-            IJwtTokenGenerator jwtTokenGenerator,IOptions<JwtOptions> jwtOptions, IMapper mapper, ILogger<AuthService> logger)
-        {
+        public AuthService(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, IRefreshTokenRepository refreshTokenRepository,IUserProfileRepository userProfileRepository, IJwtTokenGenerator jwtTokenGenerator,IOptions<JwtOptions> jwtOptions, IMapper mapper, ILogger<AuthService> logger)
+        {  
             _userManager = userManager;
             _roleManager = roleManager;
             _refreshTokenRepository = refreshTokenRepository;
@@ -93,7 +91,7 @@ namespace AuthService.Application.Services
         }
         public async Task<LoginResponseDto> RefreshTokenAsync(RefreshRequestDto dto)
         {
-            ArgumentNullException.ThrowIfNull(dto);
+            ArgumentNullException.ThrowIfNull(dto); 
             var hashedToken = _jwtTokenGenerator.HashRefreshToken(dto.RefreshToken);
             var storedToken = await _refreshTokenRepository.GetByTokenAsync(hashedToken);
             if (storedToken == null)

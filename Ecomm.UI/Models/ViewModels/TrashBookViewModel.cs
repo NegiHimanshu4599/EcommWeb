@@ -7,6 +7,5 @@ namespace Ecomm.UI.Models.ViewModels
         public TrashDashboardDto Dashboard { get; set; }
         public PagedResult<TrashBookDto> PagedBooks { get; set; }
         public BookFilterDto Filter { get; set; }
-
     }
 }
